@@ -166,11 +166,10 @@
             padding: 0; 
             list-style: none; 
             margin: 0;
-            max-height: 300px;
+            max-height: 320px;
             overflow-y: auto;
         }
 
-        /* Styling scrollbar daftar lagu */
         #list::-webkit-scrollbar {
             width: 6px;
         }
@@ -239,6 +238,10 @@
             </div>
         </div>
 
+        <!-- Audio element untuk MP3 biasa -->
+        <audio id="audio-player"></audio>
+
+        <!-- YouTube Player tersembunyi -->
         <div id="yt-player-container">
             <div id="yt-player"></div>
         </div>
@@ -250,26 +253,46 @@
 
     <script>
         const playlist = [
-            { name: "Let Down", artist: "Radiohead", youtubeId: "ZVgHPSyEIqk" },
-            { name: "No Surprises", artist: "Radiohead", youtubeId: "u5CVsCnxyXg" },
-            { name: "Creep", artist: "Radiohead", youtubeId: "XFkzRNyygfk" },
-            { name: "Exit Music (For A Film)", artist: "Radiohead", youtubeId: "Bf01riuiJWA" },
-            { name: "Fake Plastic Trees", artist: "Radiohead", youtubeId: "n5h0qHwNrHk" },
-            { name: "Karma Police", artist: "Radiohead", youtubeId: "1uYWYWPc9HU" },
-            { name: "High and Dry", artist: "Radiohead", youtubeId: "GaTq1FODBjE" },
-            { name: "Champagne Supernova", artist: "Oasis", youtubeId: "wFNbRmnO5Ag" },
-            { name: "Slide Away", artist: "Oasis", youtubeId: "3GCSUSwcDwg" },
-            { name: "Married With Children", artist: "Oasis", youtubeId: "EOoidN2s5qY" },
-            { name: "Wonderwall", artist: "Oasis", youtubeId: "Cq1sOP5dbfc" },
-            { name: "Don't Look Back In Anger", artist: "Oasis", youtubeId: "BiCAYO2iOnc" },
-            { name: "Live Forever", artist: "Oasis", youtubeId: "nwXF6d-yLK8" }
+            // --- 15 LAGU AWAL (AUDIO MP3) ---
+            { name: "Jefferson", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/9vcdbd.mp3" },
+            { name: "Everything you are", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/q14tmt.mp3" },
+            { name: "Full album Bernadya", artist: "Bernadya", type: "mp3", url: "https://files.catbox.moe/d3owq2.mp3" },
+            { name: "Full album Perunggu", artist: "Perunggu", type: "mp3", url: "https://files.catbox.moe/71u2au.mp3" },
+            { name: "Sekian, Terima Kasih", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/qv16ar.mp3" },
+            { name: "Bersandarlah", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/nmmb6s.mp3" },
+            { name: "FSTVLST full album", artist: "FSTVLST", type: "mp3", url: "https://files.catbox.moe/e21vyk.mp3" },
+            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", type: "mp3", url: "https://files.catbox.moe/do8aaz.mp3" },
+            { name: "Full album Hindia", artist: "Hindia", type: "mp3", url: "https://files.catbox.moe/rz5l15.mp3" },
+            { name: "Panasea", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/kynaza.mp3" },
+            { name: "Sandiwara semu", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/6ewg4x.mp3" },
+            { name: "Kuning", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/myjyb8.mp3" },
+            { name: "Anomali", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/0zrnxd.mp3" },
+            { name: "ATAS NAMA", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/7s5q5z.mp3" },
+            { name: "Track 8", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/9kq1w9.mp3" },
+
+            // --- 13 LAGU BARU (YOUTUBE STREAM) ---
+            { name: "Let Down", artist: "Radiohead", type: "youtube", youtubeId: "ZVgHPSyEIqk" },
+            { name: "No Surprises", artist: "Radiohead", type: "youtube", youtubeId: "u5CVsCnxyXg" },
+            { name: "Creep", artist: "Radiohead", type: "youtube", youtubeId: "XFkzRNyygfk" },
+            { name: "Exit Music (For A Film)", artist: "Radiohead", type: "youtube", youtubeId: "Bf01riuiJWA" },
+            { name: "Fake Plastic Trees", artist: "Radiohead", type: "youtube", youtubeId: "n5h0qHwNrHk" },
+            { name: "Karma Police", artist: "Radiohead", type: "youtube", youtubeId: "1uYWYWPc9HU" },
+            { name: "High and Dry", artist: "Radiohead", type: "youtube", youtubeId: "GaTq1FODBjE" },
+            { name: "Champagne Supernova", artist: "Oasis", type: "youtube", youtubeId: "wFNbRmnO5Ag" },
+            { name: "Slide Away", artist: "Oasis", type: "youtube", youtubeId: "3GCSUSwcDwg" },
+            { name: "Married With Children", artist: "Oasis", type: "youtube", youtubeId: "EOoidN2s5qY" },
+            { name: "Wonderwall", artist: "Oasis", type: "youtube", youtubeId: "Cq1sOP5dbfc" },
+            { name: "Don't Look Back In Anger", artist: "Oasis", type: "youtube", youtubeId: "BiCAYO2iOnc" },
+            { name: "Live Forever", artist: "Oasis", type: "youtube", youtubeId: "nwXF6d-yLK8" }
         ];
 
-        let player;
+        let ytPlayer;
+        let isYtReady = false;
         let currentIndex = 0;
         let isPlaying = false;
         let updateInterval;
 
+        const audioPlayer = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -281,39 +304,44 @@
         const listContainer = document.getElementById('list');
 
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('yt-player', {
+            ytPlayer = new YT.Player('yt-player', {
                 height: '0',
                 width: '0',
-                videoId: playlist[0].youtubeId,
-                playerVars: {
-                    'playsinline': 1,
-                    'controls': 0
-                },
+                playerVars: { 'playsinline': 1, 'controls': 0 },
                 events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+                    'onReady': () => {
+                        isYtReady = true;
+                        renderList();
+                        loadTrack(0, false);
+                    },
+                    'onStateChange': onYtStateChange
                 }
             });
         }
 
-        function onPlayerReady() {
-            renderList();
-            loadTrack(0, false);
-        }
-
-        function onPlayerStateChange(event) {
+        function onYtStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
                 nextTrack();
             } else if (event.data === YT.PlayerState.PLAYING) {
                 isPlaying = true;
                 playBtn.textContent = '❚❚';
                 startProgressTimer();
-            } else {
+            } else if (event.data === YT.PlayerState.PAUSED) {
                 isPlaying = false;
                 playBtn.textContent = '▶';
                 stopProgressTimer();
             }
         }
+
+        audioPlayer.addEventListener('ended', nextTrack);
+        audioPlayer.addEventListener('timeupdate', () => {
+            const track = playlist[currentIndex];
+            if (track.type === 'mp3' && audioPlayer.duration) {
+                progressEl.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+                durationEl.textContent = formatTime(audioPlayer.duration);
+            }
+        });
 
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds === 0) return "0:00";
@@ -322,28 +350,57 @@
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
+        function stopAll() {
+            audioPlayer.pause();
+            if (isYtReady && ytPlayer && ytPlayer.pauseVideo) {
+                ytPlayer.pauseVideo();
+            }
+            stopProgressTimer();
+        }
+
         function loadTrack(index, autoPlay = true) {
+            stopAll();
             currentIndex = index;
             const track = playlist[currentIndex];
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
+            progressEl.value = 0;
+            currentTimeEl.textContent = "0:00";
+            durationEl.textContent = "0:00";
             updateActiveListItem();
 
-            if (player && player.loadVideoById) {
+            if (track.type === 'mp3') {
+                audioPlayer.src = track.url;
                 if (autoPlay) {
-                    player.loadVideoById(track.youtubeId);
+                    audioPlayer.play().then(() => {
+                        isPlaying = true;
+                        playBtn.textContent = '❚❚';
+                    }).catch(e => console.log(e));
+                }
+            } else if (track.type === 'youtube' && isYtReady) {
+                if (autoPlay) {
+                    ytPlayer.loadVideoById(track.youtubeId);
                 } else {
-                    player.cueVideoById(track.youtubeId);
+                    ytPlayer.cueVideoById(track.youtubeId);
                 }
             }
         }
 
         function togglePlay() {
-            if (!player) return;
+            const track = playlist[currentIndex];
             if (isPlaying) {
-                player.pauseVideo();
+                if (track.type === 'mp3') audioPlayer.pause();
+                else if (track.type === 'youtube' && isYtReady) ytPlayer.pauseVideo();
+                isPlaying = false;
+                playBtn.textContent = '▶';
             } else {
-                player.playVideo();
+                if (track.type === 'mp3') {
+                    audioPlayer.play();
+                    isPlaying = true;
+                    playBtn.textContent = '❚❚';
+                } else if (track.type === 'youtube' && isYtReady) {
+                    ytPlayer.playVideo();
+                }
             }
         }
 
@@ -357,21 +414,20 @@
             loadTrack(currentIndex, true);
         }
 
-        function updateProgress() {
-            if (player && player.getCurrentTime) {
-                const current = player.getCurrentTime() || 0;
-                const total = player.getDuration() || 0;
-                if (total > 0) {
-                    progressEl.value = (current / total) * 100;
-                    currentTimeEl.textContent = formatTime(current);
-                    durationEl.textContent = formatTime(total);
-                }
-            }
-        }
-
         function startProgressTimer() {
             stopProgressTimer();
-            updateInterval = setInterval(updateProgress, 500);
+            updateInterval = setInterval(() => {
+                const track = playlist[currentIndex];
+                if (track.type === 'youtube' && isYtReady && ytPlayer.getCurrentTime) {
+                    const current = ytPlayer.getCurrentTime() || 0;
+                    const total = ytPlayer.getDuration() || 0;
+                    if (total > 0) {
+                        progressEl.value = (current / total) * 100;
+                        currentTimeEl.textContent = formatTime(current);
+                        durationEl.textContent = formatTime(total);
+                    }
+                }
+            }, 500);
         }
 
         function stopProgressTimer() {
@@ -394,10 +450,12 @@
         nextBtn.addEventListener('click', nextTrack);
 
         progressEl.addEventListener('input', () => {
-            if (player && player.getDuration) {
-                const total = player.getDuration();
-                const seekTo = (progressEl.value / 100) * total;
-                player.seekTo(seekTo, true);
+            const track = playlist[currentIndex];
+            if (track.type === 'mp3' && audioPlayer.duration) {
+                audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration;
+            } else if (track.type === 'youtube' && isYtReady && ytPlayer.getDuration) {
+                const seekTo = (progressEl.value / 100) * ytPlayer.getDuration();
+                ytPlayer.seekTo(seekTo, true);
             }
         });
 
@@ -405,7 +463,7 @@
             listContainer.innerHTML = '';
             playlist.forEach((track, index) => {
                 const item = document.createElement('li');
-                item.innerHTML = `<span>${index + 1}. ${track.name} - ${track.artist}</span>`;
+                item.innerHTML = `<span>${index + 1}. ${track.name} ${track.artist !== '@diazabimanyuu_' ? '- ' + track.artist : ''}</span>`;
                 item.onclick = function() {
                     loadTrack(index, true);
                 };
@@ -414,5 +472,4 @@
         }
     </script>
 </body>
-    </html>
-    
+</html>
