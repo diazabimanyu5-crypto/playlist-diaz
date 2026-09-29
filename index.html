@@ -1,63 +1,73 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlist By:Diaz</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body { 
-            font-family: sans-serif; 
+            font-family: Arial, sans-serif; 
             margin: 0;
-            padding: 20px;
+            padding: 20px 10px;
             text-align: center; 
+            background-color: #000;
+            /* Background gambar dari Catbox */
             background-image: url('https://files.catbox.moe/1000034600.jpg');
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
             background-attachment: fixed;
             min-height: 100vh;
             color: #fff;
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.8);
-            max-width: 450px;
-            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.85);
+            max-width: 420px;
+            margin: 20px auto;
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         h2 { 
             color: #1DB954; 
             margin-top: 0;
-            margin-bottom: 10px; 
+            margin-bottom: 15px; 
             font-size: 24px;
         }
 
         audio { 
             width: 100%; 
             margin: 15px 0; 
+            border-radius: 8px;
         }
 
         #list { 
             text-align: left; 
             padding: 0; 
             list-style: none; 
-            margin: 0;
+            margin: 10px 0 0 0;
         }
 
         li { 
             background: rgba(255, 255, 255, 0.1); 
-            padding: 12px; 
-            margin: 8px 0; 
-            border-radius: 6px; 
+            padding: 14px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
             cursor: pointer; 
-            word-break: break-all; 
-            transition: 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 15px;
         }
 
-        li:hover { 
+        /* Tampilan saat lagu aktif/diklik */
+        li:active, li.active { 
             background: #1DB954; 
             color: #000; 
             font-weight: bold; 
@@ -68,7 +78,7 @@
 
     <div class="container">
         <h2>Playlist By:Diaz</h2>
-        <audio id="player" controls autoplay></audio>
+        <audio id="player" controls></audio>
         <ul id="list"></ul>
     </div>
 
@@ -83,16 +93,35 @@
         const audio = document.getElementById('player');
         const listContainer = document.getElementById('list');
 
+        // Set lagu pertama secara default
+        audio.src = playlist[0].url;
+
         playlist.forEach((track, index) => {
             const item = document.createElement('li');
             item.textContent = `${index + 1}. ${track.name}`;
-            item.onclick = () => {
+            
+            // Tandai lagu pertama sebagai lagu aktif secara default
+            if (index === 0) item.classList.add('active');
+
+            item.onclick = function() {
+                // Hapus warna hijau dari lagu lain
+                document.querySelectorAll('li').forEach(el => el.classList.remove('active'));
+                
+                // Beri warna hijau pada lagu yang diklik
+                this.classList.add('active');
+
+                // Muat dan putar musik
                 audio.src = track.url;
-                audio.play();
+                audio.load();
+                audio.play().catch(err => {
+                    console.log("Autoplay diblokir oleh browser:", err);
+                });
             };
+            
             listContainer.appendChild(item);
         });
     </script>
 </body>
-  </html>
+</html>
+
 
