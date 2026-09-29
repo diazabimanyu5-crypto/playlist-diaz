@@ -241,7 +241,7 @@
     </div>
 
     <script>
-        // DAFTAR PLAYLIST FILE DIRECT AUDIO (.MP3) HANYA DARIPADA CATBOX
+        // DAFTAR PLAYLIST LENGKAP BERSAMA LAGU OASIS DARI CATBOX
         const playlist = [
             { name: "Jefferson", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
             { name: "Everything you are", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
@@ -257,7 +257,13 @@
             { name: "Kuning", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/myjyb8.mp3" },
             { name: "Anomali", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/0zrnxd.mp3" },
             { name: "ATAS NAMA", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/7s5q5z.mp3" },
-            { name: "Track 8", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" }
+            { name: "Track 8", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" },
+            
+            // --- LAGU TAMBAHAN (OASIS) ---
+            { name: "Champagne Supernova", artist: "Oasis", url: "https://files.catbox.moe/e41vv4.mp3" },
+            { name: "Don't Look Back In Anger", artist: "Oasis", url: "https://files.catbox.moe/uxynqm.mp3" },
+            { name: "Slide Away", artist: "Oasis", url: "https://files.catbox.moe/tslath.mp3" },
+            { name: "Wonderwall", artist: "Oasis", url: "https://files.catbox.moe/64ylcp.mp3" }
         ];
 
         let currentIndex = 0;
@@ -294,7 +300,7 @@
 
             audioPlayer.src = track.url;
 
-            // MediaSession API untuk mengaktifkan pemutaran di latar belakang dan bar notifikasi HP
+            // MediaSession API untuk mengontrol musik dari layar kunci & bar notifikasi HP
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: track.name,
@@ -386,5 +392,4 @@
         loadTrack(0, false);
     </script>
 </body>
-    </html>
-    
+</html>
