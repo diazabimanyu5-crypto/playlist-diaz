@@ -234,15 +234,15 @@
             </div>
         </div>
 
-        <!-- Pemutar Audio Tunggal (Dukungan Background Audio) -->
-        <audio id="audio-player" crossorigin="anonymous"></audio>
+        <!-- HTML5 Audio Engine Murni -->
+        <audio id="audio-player" preload="metadata" crossorigin="anonymous"></audio>
 
         <ul id="list"></ul>
     </div>
 
     <script>
+        // DAFTAR PLAYLIST FILE DIRECT AUDIO (.MP3) HANYA DARIPADA CATBOX
         const playlist = [
-            // --- 15 LAGU CATBOX ---
             { name: "Jefferson", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
             { name: "Everything you are", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
             { name: "Full album Bernadya", artist: "Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
@@ -257,22 +257,7 @@
             { name: "Kuning", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/myjyb8.mp3" },
             { name: "Anomali", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/0zrnxd.mp3" },
             { name: "ATAS NAMA", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/7s5q5z.mp3" },
-            { name: "Track 8", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" },
-
-            // --- 13 LAGU YOUTUBE (DI-STREAM LANGSUNG SEBAGAI AUDIO MURNI) ---
-            { name: "Let Down", artist: "Radiohead", youtubeId: "ZVgHPSyEIqk" },
-            { name: "No Surprises", artist: "Radiohead", youtubeId: "u5CVsCnxyXg" },
-            { name: "Creep", artist: "Radiohead", youtubeId: "XFkzRNyygfk" },
-            { name: "Exit Music (For A Film)", artist: "Radiohead", youtubeId: "Bf01riuiJWA" },
-            { name: "Fake Plastic Trees", artist: "Radiohead", youtubeId: "n5h0qHwNrHk" },
-            { name: "Karma Police", artist: "Radiohead", youtubeId: "1uYWYWPc9HU" },
-            { name: "High and Dry", artist: "Radiohead", youtubeId: "GaTq1FODBjE" },
-            { name: "Champagne Supernova", artist: "Oasis", youtubeId: "wFNbRmnO5Ag" },
-            { name: "Slide Away", artist: "Oasis", youtubeId: "3GCSUSwcDwg" },
-            { name: "Married With Children", artist: "Oasis", youtubeId: "EOoidN2s5qY" },
-            { name: "Wonderwall", artist: "Oasis", youtubeId: "Cq1sOP5dbfc" },
-            { name: "Don't Look Back In Anger", artist: "Oasis", youtubeId: "BiCAYO2iOnc" },
-            { name: "Live Forever", artist: "Oasis", youtubeId: "nwXF6d-yLK8" }
+            { name: "Track 8", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" }
         ];
 
         let currentIndex = 0;
@@ -289,37 +274,6 @@
         const durationEl = document.getElementById('duration');
         const listContainer = document.getElementById('list');
 
-        // Daftar server Invidious alternatif untuk menjamin kestabilan
-        const invidiousInstances = [
-            "https://inv.tux.pizza",
-            "https://invidious.nerdvpn.de",
-            "https://invidious.flokinet.to",
-            "https://invidious.projectsegfau.lt"
-        ];
-
-        // Ekstraksi URL Audio Murni dari YouTube tanpa Iklan
-        async function fetchYoutubeAudioUrl(youtubeId) {
-            for (let baseUrl of invidiousInstances) {
-                try {
-                    const res = await fetch(`${baseUrl}/api/v1/videos/${youtubeId}`);
-                    if (!res.ok) continue;
-                    const data = await res.json();
-                    if (data.adaptiveFormats) {
-                        const audioStreams = data.adaptiveFormats.filter(f => f.type && f.type.includes('audio'));
-                        if (audioStreams.length > 0) {
-                            // Ambil kualitas audio tertinggi
-                            audioStreams.sort((a, b) => (parseInt(b.bitrate) || 0) - (parseInt(a.bitrate) || 0));
-                            return audioStreams[0].url;
-                        }
-                    }
-                } catch (err) {
-                    console.warn(`Gagal mengambil audio dari ${baseUrl}, mencoba server lain...`);
-                }
-            }
-            // Fallback cadangan jika instance invidious sibuk
-            return `https://invidious.flokinet.to/latest_version?id=${youtubeId}&itag=140`;
-        }
-
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds === 0) return "0:00";
             const mins = Math.floor(seconds / 60);
@@ -327,7 +281,7 @@
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        async function loadTrack(index, autoPlay = true) {
+        function loadTrack(index, autoPlay = true) {
             currentIndex = index;
             const track = playlist[currentIndex];
             
@@ -338,18 +292,9 @@
             durationEl.textContent = "0:00";
             updateActiveListItem();
 
-            audioPlayer.pause();
+            audioPlayer.src = track.url;
 
-            let finalAudioUrl = track.url;
-            if (!finalAudioUrl && track.youtubeId) {
-                titleEl.textContent = "Memuat audio...";
-                finalAudioUrl = await fetchYoutubeAudioUrl(track.youtubeId);
-                titleEl.textContent = track.name;
-            }
-
-            audioPlayer.src = finalAudioUrl;
-
-            // Memasang MediaSession API agar bisa di-control & tetap menyala saat HP terkunci/keluar dari Chrome
+            // MediaSession API untuk mengaktifkan pemutaran di latar belakang dan bar notifikasi HP
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: track.name,
