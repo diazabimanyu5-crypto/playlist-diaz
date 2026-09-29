@@ -43,7 +43,6 @@
             margin-bottom: 15px;
         }
 
-        /* Marquee / Teks Berjalan */
         .marquee-container {
             width: 100%;
             overflow: hidden;
@@ -65,7 +64,6 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        /* PLAYER ALA APPLE MUSIC / SPOTIFY */
         .player-card {
             background: rgba(255, 255, 255, 0.07);
             border-radius: 16px;
@@ -80,7 +78,7 @@
         }
 
         .song-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 4px;
@@ -94,7 +92,6 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Progress Bar */
         .progress-container {
             margin-bottom: 15px;
         }
@@ -105,7 +102,6 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 3px;
             cursor: pointer;
-            position: relative;
             outline: none;
             -webkit-appearance: none;
         }
@@ -127,7 +123,6 @@
             margin-top: 6px;
         }
 
-        /* Controls Button */
         .controls {
             display: flex;
             justify-content: center;
@@ -166,16 +161,22 @@
             padding-left: 3px;
         }
 
-        .btn-play.playing {
-            padding-left: 0;
-        }
-
-        /* Daftar Lagu */
         #list { 
             text-align: left; 
             padding: 0; 
             list-style: none; 
             margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Styling scrollbar daftar lagu */
+        #list::-webkit-scrollbar {
+            width: 6px;
+        }
+        #list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
         }
 
         li { 
@@ -202,23 +203,24 @@
             font-weight: bold; 
             border-color: #ff69b4;
         }
+
+        #yt-player-container {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Poster -->
         <img src="bg.jpg" alt="Poster" class="poster">
         
-        <!-- Marquee Teks -->
         <div class="marquee-container">
             <span class="marquee-text">Playlist By:@diazabimanyuu_</span>
         </div>
 
-        <!-- Custom Player UI -->
         <div class="player-card">
             <div class="song-info">
-                <div class="song-title" id="title">Jefferson</div>
+                <div class="song-title" id="title">Memuat...</div>
                 <div class="song-artist" id="artist">@diazabimanyuu_</div>
             </div>
 
@@ -237,36 +239,37 @@
             </div>
         </div>
 
-        <!-- Audio Element Tersembunyi -->
-        <audio id="player"></audio>
+        <div id="yt-player-container">
+            <div id="yt-player"></div>
+        </div>
 
-        <!-- Daftar Lagu -->
         <ul id="list"></ul>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
         const playlist = [
-            { name: "Jefferson", artist: "Artist 1", url: "https://files.catbox.moe/9vcdbd.mp3" },
-            { name: "Everything you are", artist: "Artist 2", url: "https://files.catbox.moe/q14tmt.mp3" },
-            { name: "Full album Bernadya", artist: "Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
-            { name: "Full album Perunggu", artist: "Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
-            { name: "Sekian, Terima Kasih", artist: "Artist 5", url: "https://files.catbox.moe/qv16ar.mp3" },
-            { name: "Bersandarlah", artist: "Artist 6", url: "https://files.catbox.moe/nmmb6s.mp3" },
-            { name: "FSTVLST full album", artist: "FSTVLST", url: "https://files.catbox.moe/e21vyk.mp3" },
-            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
-            { name: "Full album Hindia", artist: "Hindia", url: "https://files.catbox.moe/rz5l15.mp3" },
-            { name: "Panasea", artist: "Artist 10", url: "https://files.catbox.moe/kynaza.mp3" },
-            { name: "Sandiwara semu", artist: "Artist 11", url: "https://files.catbox.moe/6ewg4x.mp3" },
-            { name: "Kuning", artist: "Artist 12", url: "https://files.catbox.moe/myjyb8.mp3" },
-            { name: "Anomali", artist: "Artist 13", url: "https://files.catbox.moe/0zrnxd.mp3" },
-            { name: "ATAS NAMA", artist: "Artist 14", url: "https://files.catbox.moe/7s5q5z.mp3" },
-            { name: "Track 8", artist: "Artist 15", url: "https://files.catbox.moe/9kq1w9.mp3" }
+            { name: "Let Down", artist: "Radiohead", youtubeId: "ZVgHPSyEIqk" },
+            { name: "No Surprises", artist: "Radiohead", youtubeId: "u5CVsCnxyXg" },
+            { name: "Creep", artist: "Radiohead", youtubeId: "XFkzRNyygfk" },
+            { name: "Exit Music (For A Film)", artist: "Radiohead", youtubeId: "Bf01riuiJWA" },
+            { name: "Fake Plastic Trees", artist: "Radiohead", youtubeId: "n5h0qHwNrHk" },
+            { name: "Karma Police", artist: "Radiohead", youtubeId: "1uYWYWPc9HU" },
+            { name: "High and Dry", artist: "Radiohead", youtubeId: "GaTq1FODBjE" },
+            { name: "Champagne Supernova", artist: "Oasis", youtubeId: "wFNbRmnO5Ag" },
+            { name: "Slide Away", artist: "Oasis", youtubeId: "3GCSUSwcDwg" },
+            { name: "Married With Children", artist: "Oasis", youtubeId: "EOoidN2s5qY" },
+            { name: "Wonderwall", artist: "Oasis", youtubeId: "Cq1sOP5dbfc" },
+            { name: "Don't Look Back In Anger", artist: "Oasis", youtubeId: "BiCAYO2iOnc" },
+            { name: "Live Forever", artist: "Oasis", youtubeId: "nwXF6d-yLK8" }
         ];
 
+        let player;
         let currentIndex = 0;
         let isPlaying = false;
+        let updateInterval;
 
-        const audio = document.getElementById('player');
         const playBtn = document.getElementById('play-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -277,58 +280,102 @@
         const durationEl = document.getElementById('duration');
         const listContainer = document.getElementById('list');
 
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('yt-player', {
+                height: '0',
+                width: '0',
+                videoId: playlist[0].youtubeId,
+                playerVars: {
+                    'playsinline': 1,
+                    'controls': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady() {
+            renderList();
+            loadTrack(0, false);
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                nextTrack();
+            } else if (event.data === YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                playBtn.textContent = '❚❚';
+                startProgressTimer();
+            } else {
+                isPlaying = false;
+                playBtn.textContent = '▶';
+                stopProgressTimer();
+            }
+        }
+
         function formatTime(seconds) {
-            if (isNaN(seconds)) return "0:00";
+            if (isNaN(seconds) || seconds === 0) return "0:00";
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        function loadTrack(index) {
+        function loadTrack(index, autoPlay = true) {
             currentIndex = index;
             const track = playlist[currentIndex];
-            audio.src = track.url;
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
-
             updateActiveListItem();
-        }
 
-        function playTrack() {
-            audio.play().then(() => {
-                isPlaying = true;
-                playBtn.textContent = '❚❚';
-                playBtn.classList.add('playing');
-            }).catch(err => {
-                console.log("Autoplay blocked:", err);
-            });
-        }
-
-        function pauseTrack() {
-            audio.pause();
-            isPlaying = false;
-            playBtn.textContent = '▶';
-            playBtn.classList.remove('playing');
+            if (player && player.loadVideoById) {
+                if (autoPlay) {
+                    player.loadVideoById(track.youtubeId);
+                } else {
+                    player.cueVideoById(track.youtubeId);
+                }
+            }
         }
 
         function togglePlay() {
+            if (!player) return;
             if (isPlaying) {
-                pauseTrack();
+                player.pauseVideo();
             } else {
-                playTrack();
+                player.playVideo();
             }
         }
 
         function prevTrack() {
             currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-            loadTrack(currentIndex);
-            playTrack();
+            loadTrack(currentIndex, true);
         }
 
         function nextTrack() {
             currentIndex = (currentIndex + 1) % playlist.length;
-            loadTrack(currentIndex);
-            playTrack();
+            loadTrack(currentIndex, true);
+        }
+
+        function updateProgress() {
+            if (player && player.getCurrentTime) {
+                const current = player.getCurrentTime() || 0;
+                const total = player.getDuration() || 0;
+                if (total > 0) {
+                    progressEl.value = (current / total) * 100;
+                    currentTimeEl.textContent = formatTime(current);
+                    durationEl.textContent = formatTime(total);
+                }
+            }
+        }
+
+        function startProgressTimer() {
+            stopProgressTimer();
+            updateInterval = setInterval(updateProgress, 500);
+        }
+
+        function stopProgressTimer() {
+            clearInterval(updateInterval);
         }
 
         function updateActiveListItem() {
@@ -342,44 +389,30 @@
             });
         }
 
-        // Event Listeners
         playBtn.addEventListener('click', togglePlay);
         prevBtn.addEventListener('click', prevTrack);
         nextBtn.addEventListener('click', nextTrack);
 
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                const progressPercent = (audio.currentTime / audio.duration) * 100;
-                progressEl.value = progressPercent;
-                currentTimeEl.textContent = formatTime(audio.currentTime);
-                durationEl.textContent = formatTime(audio.duration);
-            }
-        });
-
         progressEl.addEventListener('input', () => {
-            if (audio.duration) {
-                const seekTime = (progressEl.value / 100) * audio.duration;
-                audio.currentTime = seekTime;
+            if (player && player.getDuration) {
+                const total = player.getDuration();
+                const seekTo = (progressEl.value / 100) * total;
+                player.seekTo(seekTo, true);
             }
         });
 
-        audio.addEventListener('ended', nextTrack);
-
-        // Render List
-        playlist.forEach((track, index) => {
-            const item = document.createElement('li');
-            item.innerHTML = `<span>${index + 1}. ${track.name}</span>`;
-            
-            item.onclick = function() {
-                loadTrack(index);
-                playTrack();
-            };
-            
-            listContainer.appendChild(item);
-        });
-
-        // Initialize First Track
-        loadTrack(0);
+        function renderList() {
+            listContainer.innerHTML = '';
+            playlist.forEach((track, index) => {
+                const item = document.createElement('li');
+                item.innerHTML = `<span>${index + 1}. ${track.name} - ${track.artist}</span>`;
+                item.onclick = function() {
+                    loadTrack(index, true);
+                };
+                listContainer.appendChild(item);
+            });
+        }
     </script>
 </body>
-</html>
+    </html>
+    
