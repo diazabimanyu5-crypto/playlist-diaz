@@ -7,10 +7,11 @@
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         body { 
-            font-family: Arial, sans-serif; 
-            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             padding: 20px 10px;
             text-align: center; 
             background-color: #121212;
@@ -24,36 +25,36 @@
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(20, 25, 30, 0.88);
             max-width: 420px;
             margin: 20px auto;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .poster {
             width: 100%;
-            max-height: 280px;
+            max-height: 260px;
             object-fit: contain;
-            border-radius: 12px;
+            border-radius: 14px;
             margin-bottom: 15px;
         }
 
-        /* Teks Berjalan Pink */
+        /* Marquee / Teks Berjalan */
         .marquee-container {
             width: 100%;
             overflow: hidden;
             white-space: nowrap;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .marquee-text {
             display: inline-block;
             color: #ff69b4;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             padding-left: 100%;
             animation: marquee 10s linear infinite;
@@ -64,77 +65,267 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        audio { 
-            width: 100%; 
-            margin: 10px 0 15px 0; 
-            border-radius: 8px;
+        /* PLAYER ALA APPLE MUSIC / SPOTIFY */
+        .player-card {
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
         }
 
+        .song-info {
+            margin-bottom: 15px;
+        }
+
+        .song-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-artist {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .time-stamps {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 6px;
+        }
+
+        /* Controls Button */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-top: 10px;
+        }
+
+        .btn-control {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.1s ease, opacity 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-control:hover {
+            opacity: 0.8;
+        }
+
+        .btn-control:active {
+            transform: scale(0.9);
+        }
+
+        .btn-play {
+            background: #ffffff;
+            color: #000;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            font-size: 22px;
+            padding-left: 3px; /* visual center play icon */
+        }
+
+        .btn-play.playing {
+            padding-left: 0;
+        }
+
+        /* Daftar Lagu */
         #list { 
             text-align: left; 
             padding: 0; 
             list-style: none; 
-            margin: 10px 0 0 0;
+            margin: 0;
         }
 
         li { 
-            background: rgba(255, 255, 255, 0.1); 
-            padding: 14px; 
-            margin: 10px 0; 
-            border-radius: 8px; 
+            background: rgba(255, 255, 255, 0.08); 
+            padding: 12px 16px; 
+            margin: 8px 0; 
+            border-radius: 10px; 
             cursor: pointer; 
             transition: 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            font-size: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        li:active, li.active { 
+        li:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        li.active { 
             background: #ff69b4; 
             color: #000; 
             font-weight: bold; 
+            border-color: #ff69b4;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Poster FSTVLST -->
-        <img src="bg.jpg" alt="FSTVLST Poster" class="poster">
+        <!-- Poster -->
+        <img src="bg.jpg" alt="Poster" class="poster">
         
-        <!-- Teks Berjalan Pink -->
+        <!-- Marquee Teks -->
         <div class="marquee-container">
             <span class="marquee-text">Playlist By:@diazabimanyuu_</span>
         </div>
 
-        <audio id="player" controls></audio>
+        <!-- Custom Player UI (Gaya Apple Music/Spotify) -->
+        <div class="player-card">
+            <div class="song-info">
+                <div class="song-title" id="title">Jefferson</div>
+                <div class="song-artist" id="artist">@diazabimanyuu_</div>
+            </div>
 
+            <div class="progress-container">
+                <input type="range" id="progress" class="progress-bar" value="0" min="0" max="100">
+                <div class="time-stamps">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-control" id="prev-btn">⏮</button>
+                <button class="btn-control btn-play" id="play-btn">▶</button>
+                <button class="btn-control" id="next-btn">⏭</button>
+            </div>
+        </div>
+
+        <!-- Audio Element Tersembunyi -->
+        <audio id="player"></audio>
+
+        <!-- Daftar Lagu -->
         <ul id="list"></ul>
     </div>
 
     <script>
         const playlist = [
-            { name: "Jefferson", url: "https://files.catbox.moe/9vcdbd.mp3" },
-            { name: "Everything you are", url: "https://files.catbox.moe/q14tmt.mp3" },
-            { name: "Full album Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
-            { name: "Full album Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
-            { name: "Sekian, Terima Kasih", url: "https://files.catbox.moe/qv16ar.mp3" },
-            { name: "Bersandarlah", url: "https://files.catbox.moe/nmmb6s.mp3" },
-            { name: "FSTVLST full album", url: "https://files.catbox.moe/e21vyk.mp3" },
-            { name: "Full album Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
-            { name: "Full album Hindia", url: "https://files.catbox.moe/71u2au.mp3" }
+            { name: "Jefferson", artist: "Artist 1", url: "https://files.catbox.moe/9vcdbd.mp3" },
+            { name: "Everything you are", artist: "Artist 2", url: "https://files.catbox.moe/q14tmt.mp3" },
+            { name: "Full album Bernadya", artist: "Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
+            { name: "Full album Perunggu", artist: "Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
+            { name: "Sekian, Terima Kasih", artist: "Artist 5", url: "https://files.catbox.moe/qv16ar.mp3" },
+            { name: "Bersandarlah", artist: "Artist 6", url: "https://files.catbox.moe/nmmb6s.mp3" },
+            { name: "FSTVLST full album", artist: "FSTVLST", url: "https://files.catbox.moe/e21vyk.mp3" },
+            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
+            { name: "Full album Hindia", artist: "Hindia", url: "https://files.catbox.moe/71u2au.mp3" }
         ];
 
         let currentIndex = 0;
+        let isPlaying = false;
+
         const audio = document.getElementById('player');
+        const playBtn = document.getElementById('play-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const titleEl = document.getElementById('title');
+        const artistEl = document.getElementById('artist');
+        const progressEl = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
         const listContainer = document.getElementById('list');
 
-        // Fungsi untuk memutar lagu berdasarkan index
-        function playTrack(index) {
-            currentIndex = index;
-            audio.src = playlist[currentIndex].url;
-            audio.load();
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
-            // Update tampilan highlight di daftar lagu
+        function loadTrack(index) {
+            currentIndex = index;
+            const track = playlist[currentIndex];
+            audio.src = track.url;
+            titleEl.textContent = track.name;
+            artistEl.textContent = track.artist;
+
+            updateActiveListItem();
+        }
+
+        function playTrack() {
+            audio.play().then(() => {
+                isPlaying = true;
+                playBtn.textContent = '❚❚';
+                playBtn.classList.add('playing');
+            }).catch(err => {
+                console.log("Autoplay blocked:", err);
+            });
+        }
+
+        function pauseTrack() {
+            audio.pause();
+            isPlaying = false;
+            playBtn.textContent = '▶';
+            playBtn.classList.remove('playing');
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                pauseTrack();
+            } else {
+                playTrack();
+            }
+        }
+
+        function prevTrack() {
+            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentIndex);
+            playTrack();
+        }
+
+        function nextTrack() {
+            currentIndex = (currentIndex + 1) % playlist.length;
+            loadTrack(currentIndex);
+            playTrack();
+        }
+
+        function updateActiveListItem() {
             const allItems = listContainer.querySelectorAll('li');
             allItems.forEach((el, i) => {
                 if (i === currentIndex) {
@@ -143,34 +334,46 @@
                     el.classList.remove('active');
                 }
             });
-
-            audio.play().catch(err => {
-                console.log("Autoplay diblokir browser:", err);
-            });
         }
 
-        // Tampilkan daftar lagu di halaman
+        // Event Listeners
+        playBtn.addEventListener('click', togglePlay);
+        prevBtn.addEventListener('click', prevTrack);
+        nextBtn.addEventListener('click', nextTrack);
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                const progressPercent = (audio.currentTime / audio.duration) * 100;
+                progressEl.value = progressPercent;
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+                durationEl.textContent = formatTime(audio.duration);
+            }
+        });
+
+        progressEl.addEventListener('input', () => {
+            if (audio.duration) {
+                const seekTime = (progressEl.value / 100) * audio.duration;
+                audio.currentTime = seekTime;
+            }
+        });
+
+        audio.addEventListener('ended', nextTrack);
+
+        // Render List
         playlist.forEach((track, index) => {
             const item = document.createElement('li');
-            item.textContent = `${index + 1}. ${track.name}`;
+            item.innerHTML = `<span>${index + 1}. ${track.name}</span>`;
             
-            if (index === 0) item.classList.add('active');
-
             item.onclick = function() {
-                playTrack(index);
+                loadTrack(index);
+                playTrack();
             };
             
             listContainer.appendChild(item);
         });
 
-        // Load lagu pertama secara awal
-        audio.src = playlist[0].url;
-
-        // Otomatis lanjut ke lagu berikutnya ketika lagu selesai
-        audio.onended = function() {
-            let nextIndex = (currentIndex + 1) % playlist.length;
-            playTrack(nextIndex);
-        };
+        // Initialize First Track
+        loadTrack(0);
     </script>
 </body>
 </html>
