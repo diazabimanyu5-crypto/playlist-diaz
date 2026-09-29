@@ -13,8 +13,7 @@
             margin: 0;
             padding: 20px 10px;
             text-align: center; 
-            background-color: #000;
-            /* Memanggil file bg.jpg yang diunggah di GitHub */
+            background-color: #121212;
             background-image: url('bg.jpg');
             background-size: cover;
             background-position: center;
@@ -84,7 +83,7 @@
 <body>
 
     <div class="container">
-        <!-- Poster FSTVLST lokal dari repo -->
+        <!-- Memanggil poster FSTVLST (bg.jpg) -->
         <img src="bg.jpg" alt="FSTVLST Poster" class="poster">
         <h2>Playlist By:Diaz</h2>
         <audio id="player" controls></audio>
@@ -117,7 +116,7 @@
                 audio.src = track.url;
                 audio.load();
                 audio.play().catch(err => {
-                    console.log("Autoplay diblokir oleh browser:", err);
+                    console.log("Autoplay diblokir browser:", err);
                 });
             };
             
