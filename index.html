@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playlist By:Diaz</title>
+    <title>Playlist By:@diazabimanyuu_</title>
     <style>
         * {
             box-sizing: border-box;
@@ -42,11 +42,26 @@
             margin-bottom: 15px;
         }
 
-        h2 { 
-            color: #1DB954; 
-            margin-top: 0;
-            margin-bottom: 15px; 
-            font-size: 24px;
+        /* Styling Teks Berjalan Pink */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            margin-bottom: 15px;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            color: #ff69b4; /* Warna Pink */
+            font-size: 22px;
+            font-weight: bold;
+            padding-left: 100%;
+            animation: marquee 10s linear infinite;
+        }
+
+        @keyframes marquee {
+            0%   { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
 
         audio { 
@@ -74,7 +89,7 @@
         }
 
         li:active, li.active { 
-            background: #1DB954; 
+            background: #ff69b4; /* Highlight warna pink saat dipilih */
             color: #000; 
             font-weight: bold; 
         }
@@ -83,9 +98,14 @@
 <body>
 
     <div class="container">
-        <!-- Memanggil poster FSTVLST (bg.jpg) -->
+        <!-- Poster FSTVLST -->
         <img src="bg.jpg" alt="FSTVLST Poster" class="poster">
-        <h2>Playlist By:Diaz</h2>
+        
+        <!-- Teks Berjalan Pink -->
+        <div class="marquee-container">
+            <span class="marquee-text">Playlist By:@diazabimanyuu_</span>
+        </div>
+
         <audio id="player" controls></audio>
         <ul id="list"></ul>
     </div>
@@ -95,7 +115,12 @@
             { name: "Musik 1", url: "https://files.catbox.moe/9vcdbd.mp3" },
             { name: "Musik 2", url: "https://files.catbox.moe/q14tmt.mp3" },
             { name: "Musik 3", url: "https://files.catbox.moe/d3owq2.mp3" },
-            { name: "Musik 4", url: "https://files.catbox.moe/71u2au.mp3" }
+            { name: "Musik 4", url: "https://files.catbox.moe/71u2au.mp3" },
+            { name: "Musik 5", url: "https://files.catbox.moe/qv16ar.mp3" },
+            { name: "Musik 6", url: "https://files.catbox.moe/nmmb6s.mp3" },
+            { name: "Musik 7", url: "https://files.catbox.moe/e21vyk.mp3" },
+            { name: "Musik 8", url: "https://files.catbox.moe/do8aaz.mp3" },
+            { name: "Musik 9", url: "https://files.catbox.moe/71u2au.mp3" }
         ];
 
         const audio = document.getElementById('player');
