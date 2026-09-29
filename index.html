@@ -42,7 +42,7 @@
             margin-bottom: 15px;
         }
 
-        /* Styling Teks Berjalan Pink */
+        /* Teks Berjalan Pink */
         .marquee-container {
             width: 100%;
             overflow: hidden;
@@ -52,7 +52,7 @@
 
         .marquee-text {
             display: inline-block;
-            color: #ff69b4; /* Warna Pink */
+            color: #ff69b4;
             font-size: 22px;
             font-weight: bold;
             padding-left: 100%;
@@ -89,7 +89,7 @@
         }
 
         li:active, li.active { 
-            background: #ff69b4; /* Highlight warna pink saat dipilih */
+            background: #ff69b4; 
             color: #000; 
             font-weight: bold; 
         }
@@ -107,27 +107,49 @@
         </div>
 
         <audio id="player" controls></audio>
+
         <ul id="list"></ul>
     </div>
 
     <script>
         const playlist = [
-            { name: "Musik 1", url: "https://files.catbox.moe/9vcdbd.mp3" },
-            { name: "Musik 2", url: "https://files.catbox.moe/q14tmt.mp3" },
-            { name: "Musik 3", url: "https://files.catbox.moe/d3owq2.mp3" },
-            { name: "Musik 4", url: "https://files.catbox.moe/71u2au.mp3" },
-            { name: "Musik 5", url: "https://files.catbox.moe/qv16ar.mp3" },
-            { name: "Musik 6", url: "https://files.catbox.moe/nmmb6s.mp3" },
-            { name: "Musik 7", url: "https://files.catbox.moe/e21vyk.mp3" },
-            { name: "Musik 8", url: "https://files.catbox.moe/do8aaz.mp3" },
-            { name: "Musik 9", url: "https://files.catbox.moe/71u2au.mp3" }
+            { name: "Jefferson", url: "https://files.catbox.moe/9vcdbd.mp3" },
+            { name: "Everything you are", url: "https://files.catbox.moe/q14tmt.mp3" },
+            { name: "Full album Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
+            { name: "Full album Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
+            { name: "Sekian, Terima Kasih", url: "https://files.catbox.moe/qv16ar.mp3" },
+            { name: "Bersandarlah", url: "https://files.catbox.moe/nmmb6s.mp3" },
+            { name: "FSTVLST full album", url: "https://files.catbox.moe/e21vyk.mp3" },
+            { name: "Full album Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
+            { name: "Full album Hindia", url: "https://files.catbox.moe/71u2au.mp3" }
         ];
 
+        let currentIndex = 0;
         const audio = document.getElementById('player');
         const listContainer = document.getElementById('list');
 
-        audio.src = playlist[0].url;
+        // Fungsi untuk memutar lagu berdasarkan index
+        function playTrack(index) {
+            currentIndex = index;
+            audio.src = playlist[currentIndex].url;
+            audio.load();
 
+            // Update tampilan highlight di daftar lagu
+            const allItems = listContainer.querySelectorAll('li');
+            allItems.forEach((el, i) => {
+                if (i === currentIndex) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            audio.play().catch(err => {
+                console.log("Autoplay diblokir browser:", err);
+            });
+        }
+
+        // Tampilkan daftar lagu di halaman
         playlist.forEach((track, index) => {
             const item = document.createElement('li');
             item.textContent = `${index + 1}. ${track.name}`;
@@ -135,18 +157,20 @@
             if (index === 0) item.classList.add('active');
 
             item.onclick = function() {
-                document.querySelectorAll('li').forEach(el => el.classList.remove('active'));
-                this.classList.add('active');
-
-                audio.src = track.url;
-                audio.load();
-                audio.play().catch(err => {
-                    console.log("Autoplay diblokir browser:", err);
-                });
+                playTrack(index);
             };
             
             listContainer.appendChild(item);
         });
+
+        // Load lagu pertama secara awal
+        audio.src = playlist[0].url;
+
+        // Otomatis lanjut ke lagu berikutnya ketika lagu selesai
+        audio.onended = function() {
+            let nextIndex = (currentIndex + 1) % playlist.length;
+            playTrack(nextIndex);
+        };
     </script>
 </body>
 </html>
