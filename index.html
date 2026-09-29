@@ -13,9 +13,9 @@
             margin: 0;
             padding: 20px 10px;
             text-align: center; 
-            background-color: #000;
-            /* Background gambar dari Catbox */
-            background-image: url('https://files.catbox.moe/1000034600.jpg');
+            background-color: #0d0d0d;
+            /* Memanggil gambar yang diunggah langsung ke GitHub */
+            background-image: url('1000034600.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -35,6 +35,14 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .poster {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
         h2 { 
             color: #1DB954; 
             margin-top: 0;
@@ -44,7 +52,7 @@
 
         audio { 
             width: 100%; 
-            margin: 15px 0; 
+            margin: 10px 0 15px 0; 
             border-radius: 8px;
         }
 
@@ -66,7 +74,6 @@
             font-size: 15px;
         }
 
-        /* Tampilan saat lagu aktif/diklik */
         li:active, li.active { 
             background: #1DB954; 
             color: #000; 
@@ -77,6 +84,8 @@
 <body>
 
     <div class="container">
+        <!-- Menampilkan Poster FSTVLST -->
+        <img src="1000034600.jpg" alt="FSTVLST Poster" class="poster">
         <h2>Playlist By:Diaz</h2>
         <audio id="player" controls></audio>
         <ul id="list"></ul>
@@ -93,24 +102,18 @@
         const audio = document.getElementById('player');
         const listContainer = document.getElementById('list');
 
-        // Set lagu pertama secara default
         audio.src = playlist[0].url;
 
         playlist.forEach((track, index) => {
             const item = document.createElement('li');
             item.textContent = `${index + 1}. ${track.name}`;
             
-            // Tandai lagu pertama sebagai lagu aktif secara default
             if (index === 0) item.classList.add('active');
 
             item.onclick = function() {
-                // Hapus warna hijau dari lagu lain
                 document.querySelectorAll('li').forEach(el => el.classList.remove('active'));
-                
-                // Beri warna hijau pada lagu yang diklik
                 this.classList.add('active');
 
-                // Muat dan putar musik
                 audio.src = track.url;
                 audio.load();
                 audio.play().catch(err => {
@@ -123,5 +126,3 @@
     </script>
 </body>
 </html>
-
-
