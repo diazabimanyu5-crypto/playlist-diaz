@@ -238,10 +238,8 @@
             </div>
         </div>
 
-        <!-- Audio element untuk MP3 biasa -->
         <audio id="audio-player"></audio>
 
-        <!-- YouTube Player tersembunyi -->
         <div id="yt-player-container">
             <div id="yt-player"></div>
         </div>
@@ -253,7 +251,6 @@
 
     <script>
         const playlist = [
-            // --- 15 LAGU AWAL (AUDIO MP3) ---
             { name: "Jefferson", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/9vcdbd.mp3" },
             { name: "Everything you are", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/q14tmt.mp3" },
             { name: "Full album Bernadya", artist: "Bernadya", type: "mp3", url: "https://files.catbox.moe/d3owq2.mp3" },
@@ -270,7 +267,6 @@
             { name: "ATAS NAMA", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/7s5q5z.mp3" },
             { name: "Track 8", artist: "@diazabimanyuu_", type: "mp3", url: "https://files.catbox.moe/9kq1w9.mp3" },
 
-            // --- 13 LAGU BARU (YOUTUBE STREAM) ---
             { name: "Let Down", artist: "Radiohead", type: "youtube", youtubeId: "ZVgHPSyEIqk" },
             { name: "No Surprises", artist: "Radiohead", type: "youtube", youtubeId: "u5CVsCnxyXg" },
             { name: "Creep", artist: "Radiohead", type: "youtube", youtubeId: "XFkzRNyygfk" },
@@ -325,11 +321,28 @@
             } else if (event.data === YT.PlayerState.PLAYING) {
                 isPlaying = true;
                 playBtn.textContent = '❚❚';
+                if (ytPlayer.unMute) ytPlayer.unMute();
                 startProgressTimer();
             } else if (event.data === YT.PlayerState.PAUSED) {
                 isPlaying = false;
                 playBtn.textContent = '▶';
                 stopProgressTimer();
+            } else if (event.data === YT.PlayerState.BUFFERING) {
+                // Deteksi dan hilangkan suara durasi iklan
+                checkAndMuteAd();
+            }
+        }
+
+        function checkAndMuteAd() {
+            if (isYtReady && ytPlayer.getVideoData) {
+                const videoData = ytPlayer.getVideoData();
+                const currentTrack = playlist[currentIndex];
+                // Jika ID video yang dimainkan tidak cocok dengan lagu, itu adalah iklan
+                if (videoData && videoData.video_id && videoData.video_id !== currentTrack.youtubeId) {
+                    if (ytPlayer.mute) ytPlayer.mute();
+                } else {
+                    if (ytPlayer.unMute) ytPlayer.unMute();
+                }
             }
         }
 
@@ -419,6 +432,7 @@
             updateInterval = setInterval(() => {
                 const track = playlist[currentIndex];
                 if (track.type === 'youtube' && isYtReady && ytPlayer.getCurrentTime) {
+                    checkAndMuteAd();
                     const current = ytPlayer.getCurrentTime() || 0;
                     const total = ytPlayer.getDuration() || 0;
                     if (total > 0) {
