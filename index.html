@@ -1,1 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist By:Diaz</title>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            margin: 0;
+            padding: 20px;
+            text-align: center; 
+            background-image: url('https://files.catbox.moe/1000034600.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        h2 { 
+            color: #1DB954; 
+            margin-top: 0;
+            margin-bottom: 10px; 
+            font-size: 24px;
+        }
+
+        audio { 
+            width: 100%; 
+            margin: 15px 0; 
+        }
+
+        #list { 
+            text-align: left; 
+            padding: 0; 
+            list-style: none; 
+            margin: 0;
+        }
+
+        li { 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 12px; 
+            margin: 8px 0; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            word-break: break-all; 
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        li:hover { 
+            background: #1DB954; 
+            color: #000; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Playlist By:Diaz</h2>
+        <audio id="player" controls autoplay></audio>
+        <ul id="list"></ul>
+    </div>
+
+    <script>
+        const playlist = [
+            { name: "Musik 1", url: "https://files.catbox.moe/9vcdbd.mp3" },
+            { name: "Musik 2", url: "https://files.catbox.moe/q14tmt.mp3" },
+            { name: "Musik 3", url: "https://files.catbox.moe/d3owq2.mp3" },
+            { name: "Musik 4", url: "https://files.catbox.moe/71u2au.mp3" }
+        ];
+
+        const audio = document.getElementById('player');
+        const listContainer = document.getElementById('list');
+
+        playlist.forEach((track, index) => {
+            const item = document.createElement('li');
+            item.textContent = `${index + 1}. ${track.name}`;
+            item.onclick = () => {
+                audio.src = track.url;
+                audio.play();
+            };
+            listContainer.appendChild(item);
+        });
+    </script>
+</body>
+  </html>
 
