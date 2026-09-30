@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
+    <title>Music Player - Smart Preload</title>
     <style>
         * {
             box-sizing: border-box;
@@ -312,7 +312,7 @@
 
         <!-- Poster Gambar -->
         <div class="poster-container">
-            <img src="sampul.jpg" alt="Poster" class="poster">
+            <img src="sampul.jpg" alt="Poster" class="poster" onerror="this.src='https://placehold.co/310x310/1a1a1a/ffffff?text=Music+Player'">
         </div>
 
         <!-- Pemutar Musik -->
@@ -341,7 +341,7 @@
             </div>
         </div>
 
-        <!-- Kartu Playlist (Semua 41 Lagu Bisa Di-scroll) -->
+        <!-- Kartu Playlist (Semua 41 Lagu) -->
         <div class="playlist-card">
             <div class="playlist-header" id="playlist-count">PLAYLIST • 41 LAGU</div>
             <ul id="list"></ul>
@@ -354,7 +354,8 @@
             <span class="nav-item">📚</span>
         </div>
 
-        <audio id="audio-player" preload="metadata"></audio>
+        <!-- Audio Element dengan Smart Preload AUTO -->
+        <audio id="audio-player" preload="auto"></audio>
     </div>
 
     <script>
@@ -424,6 +425,15 @@
         const playlistCountEl = document.getElementById('playlist-count');
         const likeBtn = document.getElementById('like-btn');
 
+        // Objek Audio tersembunyi untuk Smart Preload (Mencegah Lag / Buffering)
+        const nextAudioBuffer = new Audio();
+
+        function preloadNextTrack() {
+            const nextIndex = (currentIndex + 1) % playlist.length;
+            nextAudioBuffer.src = playlist[nextIndex].url;
+            nextAudioBuffer.preload = "auto"; // Otomatis mengunduh lagu berikutnya di latar belakang
+        }
+
         playlistCountEl.textContent = `PLAYLIST • ${playlist.length} LAGU`;
 
         function formatTime(seconds) {
@@ -448,6 +458,8 @@
 
             if (shouldPlay) {
                 playAudio();
+            } else {
+                preloadNextTrack();
             }
         }
 
@@ -456,8 +468,9 @@
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     playBtn.textContent = '❚❚';
+                    preloadNextTrack(); // Mulai mengunduh lagu berikutnya saat lagu ini diputar
                 }).catch(error => {
-                    console.log("Autoplay dihambat oleh kebijakan browser:", error);
+                    console.log("Autoplay ditahan oleh kebijakan browser:", error);
                     playBtn.textContent = '▶';
                 });
             }
@@ -496,6 +509,7 @@
 
         audioPlayer.addEventListener('play', () => {
             playBtn.textContent = '❚❚';
+            preloadNextTrack();
         });
 
         audioPlayer.addEventListener('pause', () => {
@@ -527,27 +541,4 @@
         nextBtn.addEventListener('click', nextTrack);
 
         progressEl.addEventListener('input', () => {
-            if (audioPlayer.duration) {
-                audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration;
-            }
-        });
-
-        function renderList() {
-            listContainer.innerHTML = '';
-            playlist.forEach((track, index) => {
-                const item = document.createElement('li');
-                item.innerHTML = `
-                    <span class="song-name-item">${index + 1}. ${track.name}</span>
-                `;
-                item.onclick = function() {
-                    loadTrack(index, true);
-                };
-                listContainer.appendChild(item);
-            });
-        }
-
-        renderList();
-        loadTrack(0, false);
-    </script>
-</body>
-</html>
+            if (audioPlayer.du
