@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Player</title>
+    <!-- Library Howler.js untuk kestabilan audio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <style>
         *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
         body{background:#0a0b0d;min-height:100vh;color:#fff;display:flex;justify-content:center;align-items:center;padding:15px 10px;position:relative}
@@ -33,7 +35,7 @@
         .bottom-nav{margin-top:0;padding:10px 0;display:flex;justify-content:space-around;border-radius:16px}
         .nav-item{color:rgba(255,255,255,0.5);font-size:18px}
         .nav-item.active{color:#fff}
-        .status-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,0.2);margin-bottom:8px;display:inline-block}
+        .status-badge{font-size:10px;padding:3px 10px;border-radius:10px;background:rgba(255,255,255,0.2);margin-bottom:8px;display:inline-block}
     </style>
 </head>
 <body>
@@ -48,7 +50,7 @@
         </div>
 
         <div class="player-card">
-            <div id="status" class="status-badge">Ready</div>
+            <div id="status" class="status-badge">Siap Diputar</div>
             <div class="song-title" id="title">Memuat...</div>
             <div class="marquee-container">
                 <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
@@ -79,8 +81,6 @@
             <span class="nav-item">🔍</span>
             <span class="nav-item">📚</span>
         </div>
-
-        <audio id="audio-player" preload="auto" crossorigin="anonymous"></audio>
     </div>
 
     <script>
@@ -132,7 +132,9 @@
         ];
 
         let currentIndex = 0;
-        const audioPlayer = document.getElementById('audio-player');
+        let sound = null;
+        let timer = null;
+
         const playBtn = document.getElementById('play-btn');
         const titleEl = document.getElementById('title');
         const artistEl = document.getElementById('artist');
@@ -149,9 +151,14 @@
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
-        function loadTrack(index, shouldPlay = false) {
+        function loadTrack(index, autoplay = false) {
             currentIndex = index;
             const track = playlist[currentIndex];
+
+            if (sound) {
+                sound.unload();
+            }
+
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
             progressEl.value = 0;
@@ -159,31 +166,59 @@
             durationEl.textContent = "0:00";
             statusEl.textContent = "Memuat Audio...";
             statusEl.style.background = "rgba(255,200,0,0.3)";
-            
             updateActiveListItem();
-            audioPlayer.src = track.url;
-            audioPlayer.load();
 
-            if (shouldPlay) playAudio();
+            sound = new Howl({
+                src: [track.url],
+                html5: true, // Diputar secara streaming langsung tanpa memblokir UI
+                format: ['mp3'],
+                onload: function() {
+                    durationEl.textContent = formatTime(sound.duration());
+                },
+                onplay: function() {
+                    playBtn.textContent = '❚❚';
+                    statusEl.textContent = "Memutar ♪";
+                    statusEl.style.background = "rgba(0,255,100,0.3)";
+                    requestAnimationFrame(step);
+                },
+                onpause: function() {
+                    playBtn.textContent = '▶';
+                    statusEl.textContent = "Jeda";
+                    statusEl.style.background = "rgba(255,255,255,0.2)";
+                },
+                onend: function() {
+                    loadTrack((currentIndex + 1) % playlist.length, true);
+                },
+                onloaderror: function() {
+                    statusEl.textContent = "Gagal Memuat";
+                    statusEl.style.background = "rgba(255,0,0,0.4)";
+                }
+            });
+
+            if (autoplay) {
+                sound.play();
+            }
         }
 
-        function playAudio() {
-            const playPromise = audioPlayer.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    playBtn.textContent = '❚❚';
-                    statusEl.textContent = "Memutar";
-                    statusEl.style.background = "rgba(0,255,100,0.3)";
-                }).catch(() => {
-                    playBtn.textContent = '▶';
-                    statusEl.textContent = "Klik Play";
-                });
+        function step() {
+            if (sound && sound.playing()) {
+                const seek = sound.seek() || 0;
+                currentTimeEl.textContent = formatTime(seek);
+                progressEl.value = ((seek / sound.duration()) * 100) || 0;
+                requestAnimationFrame(step);
             }
         }
 
         function togglePlay() {
-            if (audioPlayer.paused) { playAudio(); } 
-            else { audioPlayer.pause(); playBtn.textContent = '▶'; statusEl.textContent = "Jeda"; }
+            if (!sound) {
+                loadTrack(currentIndex, true);
+                return;
+            }
+            if (sound.playing()) {
+                sound.pause();
+            } else {
+                sound.play();
+            }
         }
 
         function updateActiveListItem() {
@@ -194,34 +229,16 @@
             });
         }
 
-        // Event listener penanganan buffering
-        audioPlayer.addEventListener('waiting', () => {
-            statusEl.textContent = "Buffering...";
-            statusEl.style.background = "rgba(255,100,0,0.4)";
-        });
-
-        audioPlayer.addEventListener('playing', () => {
-            statusEl.textContent = "Memutar";
-            statusEl.style.background = "rgba(0,255,100,0.3)";
-            playBtn.textContent = '❚❚';
-        });
-
-        audioPlayer.addEventListener('ended', () => { 
-            loadTrack((currentIndex + 1) % playlist.length, true); 
-        });
-
-        audioPlayer.addEventListener('timeupdate', () => {
-            if (audioPlayer.duration) {
-                progressEl.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
-                durationEl.textContent = formatTime(audioPlayer.duration);
-            }
-        });
-
         document.getElementById('play-btn').onclick = togglePlay;
         document.getElementById('prev-btn').onclick = () => loadTrack((currentIndex - 1 + playlist.length) % playlist.length, true);
         document.getElementById('next-btn').onclick = () => loadTrack((currentIndex + 1) % playlist.length, true);
-        progressEl.oninput = () => { if (audioPlayer.duration) audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration; };
+
+        progressEl.oninput = () => {
+            if (sound && sound.duration()) {
+                const per = progressEl.value / 100;
+                sound.seek(sound.duration() * per);
+            }
+        };
 
         function renderList() {
             listContainer.innerHTML = '';
