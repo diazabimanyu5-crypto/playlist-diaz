@@ -22,6 +22,19 @@
             justify-content: center;
             align-items: center;
             padding: 15px 10px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Canvas untuk Animasi Hujan */
+        #rain-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .container {
@@ -30,6 +43,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 2;
         }
 
         /* Header "Now Playing" */
@@ -77,6 +92,7 @@
 
         .song-info {
             margin-bottom: 15px;
+            overflow: hidden;
         }
 
         .song-title {
@@ -89,9 +105,25 @@
             text-overflow: ellipsis;
         }
 
+        /* Wadah Teks Berjalan (Marquee) */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
         .song-artist {
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.65);
+            color: rgba(255, 255, 255, 0.75);
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 10s linear infinite;
+            font-weight: 500;
+        }
+
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
 
         /* Progress Bar */
@@ -287,20 +319,25 @@
 </head>
 <body>
 
+    <!-- Canvas untuk Efek Hujan -->
+    <canvas id="rain-canvas"></canvas>
+
     <div class="container">
         <!-- Header -->
         <div class="header-title">Now Playing</div>
 
         <!-- Poster Image -->
         <div class="poster-container">
-            <img src="sampul.jpg" alt="Poster" class="poster">
+            <img src="bg.jpg" alt="Poster" class="poster">
         </div>
 
         <!-- Player Card -->
         <div class="player-card">
             <div class="song-info">
                 <div class="song-title" id="title">Memuat...</div>
-                <div class="song-artist" id="artist">@diazabimanyuu_</div>
+                <div class="marquee-container">
+                    <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
+                </div>
             </div>
 
             <div class="progress-container">
@@ -337,22 +374,23 @@
     </div>
 
     <script>
+        // Data Playlist (Sudah diubah artist-nya menjadi Inst:diazabimanyuu_)
         const playlist = [
-            { name: "Sandiwara semu", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
-            { name: "Jefferson", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
-            { name: "Everything you are", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
+            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
+            { name: "Jefferson", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
+            { name: "Everything you are", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
             { name: "Full album Bernadya", artist: "Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
             { name: "Full album Perunggu", artist: "Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
-            { name: "Sekian, Terima Kasih", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/qv16ar.mp3" },
-            { name: "Bersandarlah", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/nmmb6s.mp3" },
+            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/qv16ar.mp3" },
+            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/nmmb6s.mp3" },
             { name: "FSTVLST full album", artist: "FSTVLST", url: "https://files.catbox.moe/e21vyk.mp3" },
             { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
             { name: "Full album Hindia", artist: "Hindia", url: "https://files.catbox.moe/rz5l15.mp3" },
-            { name: "Panasea", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/kynaza.mp3" },
-            { name: "Kuning", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/myjyb8.mp3" },
-            { name: "Anomali", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/0zrnxd.mp3" },
-            { name: "ATAS NAMA", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/7s5q5z.mp3" },
-            { name: "Track 8", artist: "@diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" },
+            { name: "Panasea", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/kynaza.mp3" },
+            { name: "Kuning", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/myjyb8.mp3" },
+            { name: "Anomali", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0zrnxd.mp3" },
+            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/7s5q5z.mp3" },
+            { name: "Track 8", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" },
             { name: "Champagne Supernova", artist: "Oasis", url: "https://files.catbox.moe/e41vv4.mp3" },
             { name: "Don't Look Back In Anger", artist: "Oasis", url: "https://files.catbox.moe/uxynqm.mp3" },
             { name: "Slide Away", artist: "Oasis", url: "https://files.catbox.moe/tslath.mp3" },
@@ -401,7 +439,7 @@
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: track.name,
                     artist: track.artist,
-                    artwork: [{ src: 'bg.jpg', sizes: '512x512', type: 'image/jpeg' }]
+                    artwork: [{ src: 'sampul.jpg', sizes: '512x512', type: 'image/jpeg' }]
                 });
 
                 navigator.mediaSession.setActionHandler('play', () => togglePlay());
@@ -499,7 +537,57 @@
 
         renderList();
         loadTrack(0, false);
+
+        /* Script Animasi Hujan (Rain Effect) */
+        const canvas = document.getElementById('rain-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const raindrops = [];
+        const rainCount = 120; // Jumlah tetesan hujan
+
+        for (let i = 0; i < rainCount; i++) {
+            raindrops.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                length: Math.random() * 18 + 10,
+                speed: Math.random() * 8 + 4,
+                opacity: Math.random() * 0.35 + 0.15
+            });
+        }
+
+        function drawRain() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < raindrops.length; i++) {
+                const drop = raindrops[i];
+                ctx.beginPath();
+                ctx.moveTo(drop.x, drop.y);
+                ctx.lineTo(drop.x, drop.y + drop.length);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${drop.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                drop.y += drop.speed;
+
+                if (drop.y > canvas.height) {
+                    drop.y = -drop.length;
+                    drop.x = Math.random() * canvas.width;
+                }
+            }
+
+            requestAnimationFrame(drawRain);
+        }
+
+        drawRain();
     </script>
 </body>
-                    </html>
+    </html>
     
