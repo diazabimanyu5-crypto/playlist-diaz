@@ -13,9 +13,7 @@
         }
 
         body { 
-            background: #121212;
-            background-image: radial-gradient(circle at center, #22252a 0%, #0d0e11 100%);
-            background-attachment: fixed;
+            background: #0a0b0d;
             min-height: 100vh;
             color: #ffffff;
             display: flex;
@@ -26,15 +24,15 @@
             position: relative;
         }
 
-        /* Canvas untuk Animasi Hujan */
+        /* Canvas untuk Animasi Hujan - Dibuat Paling Atas Latar Belakang */
         #rain-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* Agar tidak mengganggu klik pada tombol */
+            z-index: 1; /* Di atas background body */
         }
 
         .container {
@@ -44,7 +42,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            z-index: 2;
+            z-index: 10; /* Di atas animasi hujan agar tombol bisa diklik */
         }
 
         /* Header "Now Playing" */
@@ -79,14 +77,14 @@
         /* Glassmorphism Player Card */
         .player-card {
             width: 100%;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border-radius: 22px;
             padding: 20px;
             margin-bottom: 16px;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             text-align: center;
         }
 
@@ -180,10 +178,6 @@
             justify-content: center;
         }
 
-        .btn-icon:hover {
-            color: #ffffff;
-        }
-
         .btn-main {
             background: none;
             border: none;
@@ -201,17 +195,13 @@
         }
 
         .btn-play {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             color: #000000;
             width: 48px;
             height: 48px;
             border-radius: 50%;
             font-size: 18px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-play:hover {
-            background: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         /* Glassmorphism Playlist Section */
@@ -267,11 +257,6 @@
             border-bottom: none;
         }
 
-        li:hover {
-            color: #ffffff;
-            padding-left: 4px;
-        }
-
         li.active { 
             color: #ffffff; 
             font-weight: 700;
@@ -287,13 +272,12 @@
         .song-duration-item {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.45);
-            font-weight: 400;
         }
 
         /* Bottom Navigation Bar */
         .bottom-nav {
             width: 100%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 16px;
@@ -309,7 +293,6 @@
             color: rgba(255, 255, 255, 0.5);
             font-size: 18px;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .nav-item.active {
@@ -319,7 +302,7 @@
 </head>
 <body>
 
-    <!-- Canvas untuk Efek Hujan -->
+    <!-- Canvas Hujan Ditaruh Paling Atas -->
     <canvas id="rain-canvas"></canvas>
 
     <div class="container">
@@ -328,7 +311,7 @@
 
         <!-- Poster Image -->
         <div class="poster-container">
-            <img src="bg.jpg" alt="Poster" class="poster">
+            <img src="sampul.jpg" alt="Poster" class="poster">
         </div>
 
         <!-- Player Card -->
@@ -374,7 +357,6 @@
     </div>
 
     <script>
-        // Data Playlist (Sudah diubah artist-nya menjadi Inst:diazabimanyuu_)
         const playlist = [
             { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
             { name: "Jefferson", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
@@ -538,7 +520,7 @@
         renderList();
         loadTrack(0, false);
 
-        /* Script Animasi Hujan (Rain Effect) */
+        /* SCRIPT ANIMASI HUJAN (DIPERTINGGI VISIBILITASNYA) */
         const canvas = document.getElementById('rain-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -550,15 +532,15 @@
         window.addEventListener('resize', resizeCanvas);
 
         const raindrops = [];
-        const rainCount = 120; // Jumlah tetesan hujan
+        const rainCount = 160; // Diperbanyak jumlah tetesannya
 
         for (let i = 0; i < rainCount; i++) {
             raindrops.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                length: Math.random() * 18 + 10,
-                speed: Math.random() * 8 + 4,
-                opacity: Math.random() * 0.35 + 0.15
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                length: Math.random() * 25 + 15,
+                speed: Math.random() * 12 + 7,
+                opacity: Math.random() * 0.5 + 0.3 // Dibuat lebih terang/kelihatan
             });
         }
 
@@ -569,13 +551,14 @@
                 const drop = raindrops[i];
                 ctx.beginPath();
                 ctx.moveTo(drop.x, drop.y);
-                ctx.lineTo(drop.x, drop.y + drop.length);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${drop.opacity})`;
-                ctx.lineWidth = 1;
+                ctx.lineTo(drop.x - 2, drop.y + drop.length); // Sedikit miring agar efek hujan lebih nyata
+                ctx.strokeStyle = `rgba(200, 225, 255, ${drop.opacity})`;
+                ctx.lineWidth = 1.5;
                 ctx.lineCap = 'round';
                 ctx.stroke();
 
                 drop.y += drop.speed;
+                drop.x -= 0.5;
 
                 if (drop.y > canvas.height) {
                     drop.y = -drop.length;
@@ -589,5 +572,4 @@
         drawRain();
     </script>
 </body>
-    </html>
-    
+</html>
