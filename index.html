@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player - Fast GitHub</title>
+    <title>Music Player - Auto Path</title>
     <style>
         *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
         body{background:#0c0d10;min-height:100vh;color:#fff;display:flex;justify-content:center;align-items:center;padding:15px 10px}
@@ -58,50 +58,51 @@
 
     <script>
         const playlist = [
-            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", id: "1" },
-            { name: "Jefferson", artist: "Inst:diazabimanyuu_", id: "2" },
-            { name: "Everything you are", artist: "Inst:diazabimanyuu_", id: "3" },
-            { name: "Full album Bernadya", artist: "Bernadya", id: "4" },
-            { name: "Full album Perunggu", artist: "Perunggu", id: "5" },
-            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", id: "6" },
-            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", id: "7" },
-            { name: "FSTVLST full album", artist: "FSTVLST", id: "8" },
-            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", id: "9" },
-            { name: "Full album Hindia", artist: "Hindia", id: "10" },
-            { name: "Panasea", artist: "Inst:diazabimanyuu_", id: "11" },
-            { name: "Kuning", artist: "Inst:diazabimanyuu_", id: "12" },
-            { name: "Anomali", artist: "Inst:diazabimanyuu_", id: "13" },
-            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", id: "14" },
-            { name: "Track 8", artist: "Inst:diazabimanyuu_", id: "15" },
-            { name: "Champagne Supernova", artist: "Oasis", id: "16" },
-            { name: "Don't Look Back In Anger", artist: "Oasis", id: "17" },
-            { name: "Slide Away", artist: "Oasis", id: "18" },
-            { name: "Wonderwall", artist: "Oasis", id: "19" },
-            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", id: "20" },
-            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", id: "21" },
-            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", id: "22" },
-            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", id: "23" },
-            { name: "Who Knows", artist: "Inst:diazabimanyuu_", id: "24" },
-            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", id: "25" },
-            { name: "Let Down", artist: "Radiohead", id: "26" },
-            { name: "No Surprises", artist: "Radiohead", id: "27" },
-            { name: "Fake Plastic Trees", artist: "Radiohead", id: "28" },
-            { name: "Creep", artist: "Radiohead", id: "29" },
-            { name: "Exit Music", artist: "Radiohead", id: "30" },
-            { name: "Stand By Me", artist: "Oasis", id: "31" },
-            { name: "Married With Children", artist: "Oasis", id: "32" },
-            { name: "Don't Go Away", artist: "Oasis", id: "33" },
-            { name: "Supersonic", artist: "Oasis", id: "34" },
-            { name: "Sambutlah", artist: "Inst:diazabimanyuu_", id: "35" },
-            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", id: "36" },
-            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", id: "37" },
-            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", id: "38" },
-            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", id: "39" },
-            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", id: "40" },
-            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", id: "41" }
+            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_" },
+            { name: "Jefferson", artist: "Inst:diazabimanyuu_" },
+            { name: "Everything you are", artist: "Inst:diazabimanyuu_" },
+            { name: "Full album Bernadya", artist: "Bernadya" },
+            { name: "Full album Perunggu", artist: "Perunggu" },
+            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_" },
+            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_" },
+            { name: "FSTVLST full album", artist: "FSTVLST" },
+            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral" },
+            { name: "Full album Hindia", artist: "Hindia" },
+            { name: "Panasea", artist: "Inst:diazabimanyuu_" },
+            { name: "Kuning", artist: "Inst:diazabimanyuu_" },
+            { name: "Anomali", artist: "Inst:diazabimanyuu_" },
+            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_" },
+            { name: "Track 8", artist: "Inst:diazabimanyuu_" },
+            { name: "Champagne Supernova", artist: "Oasis" },
+            { name: "Don't Look Back In Anger", artist: "Oasis" },
+            { name: "Slide Away", artist: "Oasis" },
+            { name: "Wonderwall", artist: "Oasis" },
+            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_" },
+            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_" },
+            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_" },
+            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_" },
+            { name: "Who Knows", artist: "Inst:diazabimanyuu_" },
+            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_" },
+            { name: "Let Down", artist: "Radiohead" },
+            { name: "No Surprises", artist: "Radiohead" },
+            { name: "Fake Plastic Trees", artist: "Radiohead" },
+            { name: "Creep", artist: "Radiohead" },
+            { name: "Exit Music", artist: "Radiohead" },
+            { name: "Stand By Me", artist: "Oasis" },
+            { name: "Married With Children", artist: "Oasis" },
+            { name: "Don't Go Away", artist: "Oasis" },
+            { name: "Supersonic", artist: "Oasis" },
+            { name: "Sambutlah", artist: "Inst:diazabimanyuu_" },
+            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_" },
+            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_" },
+            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_" },
+            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_" },
+            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_" },
+            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_" }
         ];
 
         let currentIndex = 0;
+        let attempt = 0;
         const audio = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
         const titleEl = document.getElementById('title');
@@ -119,14 +120,31 @@
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
+        function getSlug(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+        }
+
+        // Pencarian Jalur File Otomatis Tanpa Ubah Nama File Manual
+        function getPathByAttempt(track, index) {
+            const slug = getSlug(track.name);
+            const num = index + 1;
+            
+            if (attempt === 0) return `./music/${slug}.mp3`;                  // contoh: ./music/sandiwara-semu.mp3
+            if (attempt === 1) return `./music/${track.name}.mp3`;            // contoh: ./music/Sandiwara semu.mp3
+            if (attempt === 2) return `./music/${num}.mp3`;                   // contoh: ./music/1.mp3
+            if (attempt === 3) return `./${slug}.mp3`;                        // contoh: ./sandiwara-semu.mp3
+            if (attempt === 4) return `./${track.name}.mp3`;                  // contoh: ./Sandiwara semu.mp3
+            return `./${num}.mp3`;                                           // contoh: ./1.mp3
+        }
+
         function loadTrack(index, autoPlay = false) {
             currentIndex = index;
+            attempt = 0;
             const track = playlist[currentIndex];
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
             
-            // Mengakses file ./music/1.mp3, ./music/2.mp3, dst.
-            audio.src = `./music/${track.id}.mp3`;
+            audio.src = getPathByAttempt(track, currentIndex);
             audio.load();
 
             updateActiveItem();
@@ -134,8 +152,16 @@
         }
 
         audio.onerror = () => {
-            statusEl.textContent = "Error 404: Cek Nama File";
-            statusEl.style.background = "rgba(255,0,0,0.4)";
+            attempt++;
+            if (attempt <= 5) {
+                statusEl.textContent = "Mencari file...";
+                audio.src = getPathByAttempt(playlist[currentIndex], currentIndex);
+                audio.load();
+                audio.play().catch(() => {});
+            } else {
+                statusEl.textContent = "File Not Found (404)";
+                statusEl.style.background = "rgba(255,0,0,0.4)";
+            }
         };
 
         function updateActiveItem() {
