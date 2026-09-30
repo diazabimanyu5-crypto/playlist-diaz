@@ -3,470 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player - TikTok & Catbox</title>
+    <title>Animasi</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
 
         body {
             background-color: #0c0d10;
-            color: #ffffff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px 12px;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        /* HEADER MEDIA / TIKTOK VIDEO CONTAINER */
-        .media-card {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            border-radius: 20px;
             overflow: hidden;
-            background: #16181d;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
 
-        .media-content {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* PLAYER CONTROL CARD */
-        .player-card {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 22px;
-            padding: 20px 18px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .status-badge {
-            font-size: 11px;
-            padding: 3px 10px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        .song-info {
-            text-align: center;
-            width: 100%;
-        }
-
-        .song-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .song-artist {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .progress-container {
-            width: 100%;
-            margin-top: 4px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 3px;
-            outline: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-        }
-
-        .progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 0 8px rgba(255,255,255,0.8);
-        }
-
-        .time-stamps {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 6px;
-        }
-
-        .controls {
-            display: flex;
-            justify-style: space-around;
-            align-items: center;
-            width: 100%;
-            margin-top: 6px;
-        }
-
-        .btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            cursor: pointer;
+        .container {
+            width: 300px;
+            height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.1s ease;
         }
 
-        .btn:active {
-            transform: scale(0.92);
+        svg {
+            width: 100%;
+            height: 100%;
         }
 
-        .btn-secondary {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.7);
+        /* Animasi Jari Tengah Naik */
+        .middle-finger {
+            transform-origin: bottom center;
+            animation: raiseFinger 2s cubic-bezier(0.4, 0, 0.2, 1) forwards infinite alternate;
         }
 
-        .btn-main {
-            font-size: 22px;
-        }
-
-        .btn-play {
-            width: 52px;
-            height: 52px;
-            background: #ffffff;
-            color: #000000;
-            border-radius: 50%;
-            font-size: 20px;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-        }
-
-        /* PLAYLIST CARD */
-        .playlist-card {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 22px;
-            padding: 18px;
-        }
-
-        .playlist-header {
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .playlist-items {
-            list-style: none;
-            max-height: 220px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .playlist-items::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .playlist-items::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
-
-        .playlist-item {
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.65);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s ease, color 0.2s ease;
-        }
-
-        .playlist-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
-
-        .playlist-item.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            font-weight: 600;
+        @keyframes raiseFinger {
+            0% {
+                /* Posisi awal: tertekuk ke bawah (seperti mengepal) */
+                transform: translateY(65px) scaleY(0.2);
+            }
+            40% {
+                /* Diam sebentar dalam posisi mengepal */
+                transform: translateY(65px) scaleY(0.2);
+            }
+            100% {
+                /* Naik penuh ke atas */
+                transform: translateY(0) scaleY(1);
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- MEDIA DISPLAY (SAMPUL / VIDEO TIKTOK) -->
-        <div class="media-card" id="media-card">
-            <!-- Tampilan Foto Sampul Default -->
-            <img src="sampul.jpg" alt="Album Cover" class="media-content" id="album-cover">
+    <div class="container">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Jari Tengah (Bagian yang Bergerak) -->
+            <g class="middle-finger">
+                <rect x="88" y="30" width="24" height="90" rx="12" fill="#ffffff"/>
+            </g>
 
-            <!-- Untuk Aktifkan Video TikTok MP4, Hapus Tanda Comment ( <!-- dan --> ) Di Bawah Ini: -->
-            <!--
-            <video class="media-content" id="bg-video" autoplay loop muted playsinline>
-                <source src="video.mp4" type="video/mp4">
-            </video>
-            -->
-        </div>
+            <!-- Jari Kelingking (Tertekuk) -->
+            <rect x="142" y="95" width="22" height="45" rx="11" fill="#dddddd"/>
+            
+            <!-- Jari Manis (Tertekuk) -->
+            <rect x="116" y="90" width="22" height="50" rx="11" fill="#eeeeee"/>
 
-        <!-- PLAYER CONTROLLER -->
-        <div class="player-card">
-            <div id="status" class="status-badge">Ready</div>
+            <!-- Jari Telunjuk (Tertekuk) -->
+            <rect x="62" y="90" width="22" height="50" rx="11" fill="#eeeeee"/>
 
-            <div class="song-info">
-                <div class="song-title" id="title">Memuat...</div>
-                <div class="song-artist" id="artist">Artist</div>
-            </div>
+            <!-- Ibu Jari / Jempol (Menutup di depan) -->
+            <path d="M 45 115 C 45 100, 75 105, 90 120 C 95 125, 85 140, 70 140 C 55 140, 45 130, 45 115 Z" fill="#ffffff"/>
 
-            <div class="progress-container">
-                <input type="range" id="progress" class="progress-bar" value="0" min="0" max="100">
-                <div class="time-stamps">
-                    <span id="current-time">0:00</span>
-                    <span id="duration">0:00</span>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button class="btn btn-secondary" id="shuffle-btn">🔀</button>
-                <button class="btn btn-main" id="prev-btn">⏮</button>
-                <button class="btn btn-play" id="play-btn">▶</button>
-                <button class="btn btn-main" id="next-btn">⏭</button>
-                <button class="btn btn-secondary" id="like-btn">♡</button>
-            </div>
-        </div>
-
-        <!-- PLAYLIST -->
-        <div class="playlist-card">
-            <div class="playlist-header">PLAYLIST • 41 LAGU</div>
-            <ul class="playlist-items" id="playlist-list"></ul>
-        </div>
+            <!-- Telapak & Pergelangan Tangan -->
+            <path d="M 55 125 L 145 125 L 140 180 L 60 180 Z" fill="#cccccc"/>
+        </svg>
     </div>
 
-    <!-- PENTING: crossOrigin="anonymous" agar Catbox tidak diblokir browser -->
-    <audio id="audio-player" preload="auto" crossorigin="anonymous"></audio>
-
-    <script>
-        // DAFTAR LAGU CATBOX (Ganti xxxxxx dengan ID link Catbox asli Anda)
-        const playlist = [
-            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Jefferson", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Everything you are", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Bernadya", artist: "Bernadya", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Perunggu", artist: "Perunggu", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "FSTVLST full album", artist: "FSTVLST", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Hindia", artist: "Hindia", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Panasea", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Kuning", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Anomali", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Track 8", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Champagne Supernova", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Don't Look Back In Anger", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Slide Away", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Wonderwall", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Who Knows", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Let Down", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "No Surprises", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Fake Plastic Trees", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Creep", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Exit Music", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Stand By Me", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Married With Children", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Don't Go Away", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Supersonic", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Sambutlah", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" }
-        ];
-
-        let currentIndex = 0;
-        let isShuffle = false;
-
-        const audio = document.getElementById('audio-player');
-        const playBtn = document.getElementById('play-btn');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const shuffleBtn = document.getElementById('shuffle-btn');
-        const titleEl = document.getElementById('title');
-        const artistEl = document.getElementById('artist');
-        const progressEl = document.getElementById('progress');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationEl = document.getElementById('duration');
-        const statusEl = document.getElementById('status');
-        const playlistList = document.getElementById('playlist-list');
-
-        function formatTime(sec) {
-            if (isNaN(sec)) return "0:00";
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-
-        function loadTrack(index, autoPlay = false) {
-            currentIndex = index;
-            const track = playlist[currentIndex];
-            titleEl.textContent = track.name;
-            artistEl.textContent = track.artist;
-
-            audio.src = track.src;
-            audio.load();
-
-            updateActiveItem();
-            if (autoPlay) {
-                audio.play().catch(() => {});
-            }
-        }
-
-        function updateActiveItem() {
-            const items = playlistList.querySelectorAll('.playlist-item');
-            items.forEach((el, i) => {
-                if (i === currentIndex) {
-                    el.classList.add('active');
-                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                } else {
-                    el.classList.remove('active');
-                }
-            });
-        }
-
-        playBtn.onclick = () => {
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-            }
-        };
-
-        prevBtn.onclick = () => {
-            let nextIndex = currentIndex - 1;
-            if (nextIndex < 0) nextIndex = playlist.length - 1;
-            loadTrack(nextIndex, true);
-        };
-
-        nextBtn.onclick = () => {
-            let nextIndex;
-            if (isShuffle) {
-                nextIndex = Math.floor(Math.random() * playlist.length);
-            } else {
-                nextIndex = (currentIndex + 1) % playlist.length;
-            }
-            loadTrack(nextIndex, true);
-        };
-
-        shuffleBtn.onclick = () => {
-            isShuffle = !isShuffle;
-            shuffleBtn.style.color = isShuffle ? '#00ff88' : 'rgba(255, 255, 255, 0.7)';
-        };
-
-        audio.onwaiting = () => {
-            statusEl.textContent = "Loading Catbox...";
-        };
-
-        audio.onplaying = () => {
-            statusEl.textContent = "Playing ♪";
-            statusEl.style.background = "rgba(0,255,136,0.2)";
-            statusEl.style.color = "#00ff88";
-            playBtn.textContent = '❚❚';
-        };
-
-        audio.onpause = () => {
-            statusEl.textContent = "Paused";
-            statusEl.style.background = "rgba(255,255,255,0.1)";
-            statusEl.style.color = "rgba(255, 255, 255, 0.8)";
-            playBtn.textContent = '▶';
-        };
-
-        // Otomatis terhubung kembali jika koneksi ke Catbox sempat lambat
-        audio.onerror = () => {
-            statusEl.textContent = "Reconnecting...";
-            statusEl.style.background = "rgba(255,165,0,0.3)";
-            statusEl.style.color = "#ffa500";
-            
-            setTimeout(() => {
-                audio.load();
-                if(!audio.paused) audio.play().catch(() => {});
-            }, 1500);
-        };
-
-        audio.onended = () => {
-            nextBtn.click();
-        };
-
-        audio.ontimeupdate = () => {
-            if (audio.duration) {
-                progressEl.value = (audio.currentTime / audio.duration) * 100;
-                currentTimeEl.textContent = formatTime(audio.currentTime);
-                durationEl.textContent = formatTime(audio.duration);
-            }
-        };
-
-        progressEl.oninput = () => {
-            if (audio.duration) {
-                audio.currentTime = (progressEl.value / 100) * audio.duration;
-            }
-        };
-
-        function renderPlaylist() {
-            playlistList.innerHTML = '';
-            playlist.forEach((track, i) => {
-                const li = document.createElement('li');
-                li.className = 'playlist-item';
-                li.innerHTML = `<span>${i + 1}. ${track.name}</span>`;
-                li.onclick = () => loadTrack(i, true);
-                playlistList.appendChild(li);
-            });
-        }
-
-        renderPlaylist();
-        loadTrack(0, false);
-    </script>
 </body>
-    </html>
-    
+</html>
