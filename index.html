@@ -1,20 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Music Player - Glassmorphism UI</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+    <title>Playlist - Now Playing</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body { 
@@ -24,12 +19,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px 10px;
+            padding: 15px 10px;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Fullscreen Video Background */
+        /* Video Background */
         #bg-video {
             position: fixed;
             top: 0;
@@ -38,14 +33,13 @@
             height: 100vh;
             object-fit: cover;
             z-index: 1;
-            filter: brightness(0.45) contrast(1.05);
+            filter: brightness(0.4);
             pointer-events: none;
         }
 
-        /* Main Player Layout Container */
-        .app-container {
+        .container {
             width: 100%;
-            max-width: 410px;
+            max-width: 390px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -53,58 +47,79 @@
             z-index: 10;
         }
 
-        /* Glassmorphism Effect Cards */
-        .glass-card {
-            background: rgba(15, 18, 28, 0.45);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        /* Header "Now Playing" */
+        .header-title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* Poster Image Artwork Effect */
-        .poster-wrapper {
-            position: relative;
+        /* Cover Art / Poster Image */
+        .poster-container {
             width: 100%;
             aspect-ratio: 1 / 1;
-            max-height: 300px;
-            border-radius: 24px;
+            max-height: 310px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
             margin-bottom: 20px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .poster-glow {
-            position: absolute;
-            inset: 0;
-            border-radius: 24px;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(20px);
-            opacity: 0.6;
-            z-index: 1;
-        }
-
-        .poster-img {
-            position: relative;
-            z-index: 2;
+        .poster {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
 
-        /* Marquee Scrolling Text for Artist Name */
+        /* Glassmorphism Player Card */
+        .player-card {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 22px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .song-info {
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .song-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Wadah Teks Berjalan (Marquee) */
         .marquee-container {
             width: 100%;
             overflow: hidden;
             white-space: nowrap;
-            position: relative;
         }
 
         .song-artist {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.85);
             display: inline-block;
             padding-left: 100%;
-            animation: marquee 12s linear infinite;
+            animation: marquee 10s linear infinite;
+            font-weight: 500;
         }
 
         @keyframes marquee {
@@ -112,197 +127,294 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        /* Custom Progress Bar Range Input */
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 12px;
+        }
+
         .progress-bar {
             width: 100%;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 2px;
             cursor: pointer;
             outline: none;
             -webkit-appearance: none;
-            transition: height 0.2s ease;
-        }
-
-        .progress-bar:hover {
-            height: 7px;
         }
 
         .progress-bar::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: #ffffff;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .time-stamps {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Player Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px 0 10px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-main {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: transform 0.1s ease;
         }
 
-        .progress-bar::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+        .btn-main:active {
+            transform: scale(0.88);
         }
 
-        /* Custom Scrollbar for Song List */
-        .custom-scroll::-webkit-scrollbar {
+        .btn-play {
+            background: rgba(255, 255, 255, 0.95);
+            color: #000000;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Glassmorphism Playlist Section */
+        .playlist-card {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 22px;
+            padding: 16px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .playlist-header {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        #list { 
+            text-align: left; 
+            padding: 0; 
+            list-style: none; 
+            margin: 0;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        #list::-webkit-scrollbar {
             width: 4px;
         }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.25);
+        #list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 4px;
         }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
+
+        li { 
+            padding: 10px 0; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer; 
+            transition: 0.2s ease;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.85);
         }
 
-        /* Playlist Item Highlight */
-        .playlist-item {
-            transition: all 0.2s ease;
+        li:last-child {
+            border-bottom: none;
         }
 
-        .playlist-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 3px solid #ffffff;
-            padding-left: 12px !important;
+        li.active { 
+            color: #ffffff; 
+            font-weight: 700;
         }
 
-        .playlist-item:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.08);
+        .song-name-item {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 240px;
+        }
+
+        .song-duration-item {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            margin-top: 14px;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-item {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #ffffff;
         }
     </style>
 </head>
 <body>
 
+    <!-- Video Background Animasi -->
     <video autoplay muted loop playsinline id="bg-video">
         <source src="https://files.catbox.moe/ypad4h.mp4" type="video/mp4">
     </video>
 
-    <div class="app-container">
-        
-        <!-- Header Title Bar -->
-        <div class="w-full flex justify-between items-center mb-4 px-2">
-            <span class="text-xs font-bold tracking-widest text-white/70 uppercase">Now Playing</span>
-            <span class="text-xs px-2.5 py-1 rounded-full bg-white/10 text-white/80 border border-white/10">Playlist Player</span>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-title">Now Playing</div>
+
+        <!-- Poster Image -->
+        <div class="poster-container">
+            <img src="sampul.jpg" alt="Poster" class="poster">
         </div>
 
-        <!-- Poster Art Display -->
-        <div class="poster-wrapper">
-            <div class="poster-glow"></div>
-            <img src="sampul.jpg" onerror="this.src='https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=600&auto=format&fit=crop'" alt="Cover Art" class="poster-img">
-        </div>
-
-        <!-- Main Player Controls Card -->
-        <div class="glass-card w-full rounded-3xl p-5 mb-4 text-center">
-            
-            <!-- Song Information Display -->
-            <div class="mb-4 overflow-hidden">
-                <h2 id="title" class="text-lg font-bold text-white mb-1 truncate">Memuat Lagu...</h2>
+        <!-- Player Card -->
+        <div class="player-card">
+            <div class="song-info">
+                <div class="song-title" id="title">Memuat...</div>
                 <div class="marquee-container">
-                    <span id="artist" class="song-artist text-xs text-white/80 font-medium">Inst:diazabimanyuu_</span>
+                    <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
                 </div>
             </div>
 
-            <!-- Audio Progress Slider & Time Stamps -->
-            <div class="mb-3">
+            <div class="progress-container">
                 <input type="range" id="progress" class="progress-bar" value="0" min="0" max="100">
-                <div class="flex justify-between text-[11px] font-semibold text-white/60 mt-2 px-1">
+                <div class="time-stamps">
                     <span id="current-time">0:00</span>
                     <span id="duration">0:00</span>
                 </div>
             </div>
 
-            <!-- Player Action Buttons -->
-            <div class="flex justify-between items-center px-2 pt-1">
-                <button id="shuffle-btn" class="text-white/70 hover:text-white transition-all text-base focus:outline-none" title="Shuffle">🔀</button>
-                <button id="prev-btn" class="text-white hover:scale-110 active:scale-95 transition-all text-xl focus:outline-none">⏮</button>
-                
-                <button id="play-btn" class="w-12 h-12 rounded-full bg-white text-black text-xl flex items-center justify-center font-bold shadow-lg shadow-black/40 hover:scale-105 active:scale-90 transition-all focus:outline-none">
-                    ▶
-                </button>
-                
-                <button id="next-btn" class="text-white hover:scale-110 active:scale-95 transition-all text-xl focus:outline-none">⏭</button>
-                <button id="like-btn" class="text-white/70 hover:text-red-400 transition-all text-lg focus:outline-none" title="Favorite">♡</button>
+            <div class="controls">
+                <button class="btn-icon" id="shuffle-btn">🔀</button>
+                <button class="btn-main" id="prev-btn">⏮</button>
+                <button class="btn-main btn-play" id="play-btn">▶</button>
+                <button class="btn-main" id="next-btn">⏭</button>
+                <button class="btn-icon" id="like-btn">♡</button>
             </div>
         </div>
 
-        <!-- Scrollable Full Playlist Card -->
-        <div class="glass-card w-full rounded-3xl p-4 mb-3">
-            <div class="flex justify-between items-center mb-3 px-1">
-                <span class="text-xs font-bold text-white/80 uppercase tracking-wider">Playlist</span>
-                <span id="total-songs-count" class="text-xs text-white/50 font-medium">41 Lagu</span>
-            </div>
-
-            <!-- Dynamic Scrollable Track List (All 41 Songs) -->
-            <ul id="playlist-container" class="custom-scroll max-h-[280px] overflow-y-auto space-y-1">
-                <!-- Dynamically Populated Songs -->
-            </ul>
+        <!-- Playlist Card -->
+        <div class="playlist-card">
+            <div class="playlist-header" id="playlist-count">Playlist • 41 lagu</div>
+            <ul id="list"></ul>
         </div>
 
-        <!-- Audio Element -->
-        <audio id="audio-player" preload="metadata" crossorigin="anonymous"></audio>
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <span class="nav-item active">🏠</span>
+            <span class="nav-item">🔍</span>
+            <span class="nav-item">📚</span>
+        </div>
+
+        <audio id="audio-player" preload="auto" crossorigin="anonymous"></audio>
     </div>
 
     <script>
-        // Mute video background audio output
+        // Memastikan suara video background mati
         const bgVideo = document.getElementById('bg-video');
         if (bgVideo) {
             bgVideo.muted = true;
             bgVideo.volume = 0;
         }
 
-        // Complete 41 Tracks Playlist Array
         const playlist = [
-            { id: 1, name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
-            { id: 2, name: "Jefferson", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
-            { id: 3, name: "Everything you are", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
-            { id: 4, name: "Full album Bernadya", artist: "Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
-            { id: 5, name: "Full album Perunggu", artist: "Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
-            { id: 6, name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/qv16ar.mp3" },
-            { id: 7, name: "Bersandarlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/nmmb6s.mp3" },
-            { id: 8, name: "FSTVLST full album", artist: "FSTVLST", url: "https://files.catbox.moe/e21vyk.mp3" },
-            { id: 9, name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
-            { id: 10, name: "Full album Hindia", artist: "Hindia", url: "https://files.catbox.moe/rz5l15.mp3" },
-            { id: 11, name: "Panasea", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/kynaza.mp3" },
-            { id: 12, name: "Kuning", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/myjyb8.mp3" },
-            { id: 13, name: "Anomali", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0zrnxd.mp3" },
-            { id: 14, name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/7s5q5z.mp3" },
-            { id: 15, name: "Track 8", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" },
-            { id: 16, name: "Champagne Supernova", artist: "Oasis", url: "https://files.catbox.moe/e41vv4.mp3" },
-            { id: 17, name: "Don't Look Back In Anger", artist: "Oasis", url: "https://files.catbox.moe/uxynqm.mp3" },
-            { id: 18, name: "Slide Away", artist: "Oasis", url: "https://files.catbox.moe/tslath.mp3" },
-            { id: 19, name: "Wonderwall", artist: "Oasis", url: "https://files.catbox.moe/64ylcp.mp3" },
-            { id: 20, name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/zskwa1.mp3" },
-            { id: 21, name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/b270xq.mp3" },
-            { id: 22, name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/o5azqh.mp3" },
-            { id: 23, name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/xrz84p.mp3" },
-            { id: 24, name: "Who Knows", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/tvltgy.mp3" },
-            { id: 25, name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/r4epfg.mp3" },
-            { id: 26, name: "Let Down", artist: "Radiohead", url: "https://files.catbox.moe/cpy5fk.mp3" },
-            { id: 27, name: "No Surprises", artist: "Radiohead", url: "https://files.catbox.moe/1egzv1.mp3" },
-            { id: 28, name: "Fake Plastic Trees", artist: "Radiohead", url: "https://files.catbox.moe/tww0an.mp3" },
-            { id: 29, name: "Creep", artist: "Radiohead", url: "https://files.catbox.moe/am615v.mp3" },
-            { id: 30, name: "Exit Music", artist: "Radiohead", url: "https://files.catbox.moe/vq2k0n.mp3" },
-            { id: 31, name: "Stand By Me", artist: "Oasis", url: "https://files.catbox.moe/9tam7j.mp3" },
-            { id: 32, name: "Married With Children", artist: "Oasis", url: "https://files.catbox.moe/fif5lo.mp3" },
-            { id: 33, name: "Don't Go Away", artist: "Oasis", url: "https://files.catbox.moe/fcfzmu.mp3" },
-            { id: 34, name: "Supersonic", artist: "Oasis", url: "https://files.catbox.moe/qzrzft.mp3" },
-            { id: 35, name: "Sambutlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/pgijz3.mp3" },
-            { id: 36, name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/rllra6.mp3" },
-            { id: 37, name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/v3ebyu.mp3" },
-            { id: 38, name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/1x27ee.mp3" },
-            { id: 39, name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/djolg6.mp3" },
-            { id: 40, name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/p1495a.mp3" },
-            { id: 41, name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0v0mn4.mp3" }
+            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
+            { name: "Jefferson", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
+            { name: "Everything you are", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
+            { name: "Full album Bernadya", artist: "Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
+            { name: "Full album Perunggu", artist: "Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
+            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/qv16ar.mp3" },
+            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/nmmb6s.mp3" },
+            { name: "FSTVLST full album", artist: "FSTVLST", url: "https://files.catbox.moe/e21vyk.mp3" },
+            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
+            { name: "Full album Hindia", artist: "Hindia", url: "https://files.catbox.moe/rz5l15.mp3" },
+            { name: "Panasea", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/kynaza.mp3" },
+            { name: "Kuning", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/myjyb8.mp3" },
+            { name: "Anomali", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0zrnxd.mp3" },
+            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/7s5q5z.mp3" },
+            { name: "Track 8", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" },
+            { name: "Champagne Supernova", artist: "Oasis", url: "https://files.catbox.moe/e41vv4.mp3" },
+            { name: "Don't Look Back In Anger", artist: "Oasis", url: "https://files.catbox.moe/uxynqm.mp3" },
+            { name: "Slide Away", artist: "Oasis", url: "https://files.catbox.moe/tslath.mp3" },
+            { name: "Wonderwall", artist: "Oasis", url: "https://files.catbox.moe/64ylcp.mp3" },
+            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/zskwa1.mp3" },
+            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/b270xq.mp3" },
+            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/o5azqh.mp3" },
+            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/xrz84p.mp3" },
+            { name: "Who Knows", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/tvltgy.mp3" },
+            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/r4epfg.mp3" },
+            { name: "Let Down", artist: "Radiohead", url: "https://files.catbox.moe/cpy5fk.mp3" },
+            { name: "No Surprises", artist: "Radiohead", url: "https://files.catbox.moe/1egzv1.mp3" },
+            { name: "Fake Plastic Trees", artist: "Radiohead", url: "https://files.catbox.moe/tww0an.mp3" },
+            { name: "Creep", artist: "Radiohead", url: "https://files.catbox.moe/am615v.mp3" },
+            { name: "Exit Music", artist: "Radiohead", url: "https://files.catbox.moe/vq2k0n.mp3" },
+            { name: "Stand By Me", artist: "Oasis", url: "https://files.catbox.moe/9tam7j.mp3" },
+            { name: "Married With Children", artist: "Oasis", url: "https://files.catbox.moe/fif5lo.mp3" },
+            { name: "Don't Go Away", artist: "Oasis", url: "https://files.catbox.moe/fcfzmu.mp3" },
+            { name: "Supersonic", artist: "Oasis", url: "https://files.catbox.moe/qzrzft.mp3" },
+            { name: "Sambutlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/pgijz3.mp3" },
+            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/rllra6.mp3" },
+            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/v3ebyu.mp3" },
+            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/1x27ee.mp3" },
+            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/djolg6.mp3" },
+            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/p1495a.mp3" },
+            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0v0mn4.mp3" }
         ];
 
-        // State Tracking Variables
-        let currentTrackIndex = 0;
-        let isPlaying = false;
+        let currentIndex = 0;
 
-        // DOM Element Cache
         const audioPlayer = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
         const prevBtn = document.getElementById('prev-btn');
@@ -312,9 +424,11 @@
         const progressEl = document.getElementById('progress');
         const currentTimeEl = document.getElementById('current-time');
         const durationEl = document.getElementById('duration');
-        const playlistContainer = document.getElementById('playlist-container');
+        const listContainer = document.getElementById('list');
+        const playlistCountEl = document.getElementById('playlist-count');
         const likeBtn = document.getElementById('like-btn');
-        const shuffleBtn = document.getElementById('shuffle-btn');
+
+        playlistCountEl.textContent = `Playlist • ${playlist.length} lagu`;
 
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds === 0) return "0:00";
@@ -323,28 +437,20 @@
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        function loadTrack(index, autoPlay = true) {
-            if (index < 0 || index >= playlist.length) return;
+        function loadTrack(index, shouldPlay = false) {
+            currentIndex = index;
+            const track = playlist[currentIndex];
             
-            currentTrackIndex = index;
-            const track = playlist[currentTrackIndex];
-
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
             progressEl.value = 0;
             currentTimeEl.textContent = "0:00";
             durationEl.textContent = "0:00";
+            updateActiveListItem();
 
             audioPlayer.src = track.url;
-            updateActivePlaylistItem();
+            audioPlayer.load();
 
-            // Auto-scroll the playlist to the active song item
-            const activeItem = playlistContainer.children[currentTrackIndex];
-            if (activeItem) {
-                activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-
-            // Set up MediaSession metadata for native browser controls
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: track.name,
@@ -358,76 +464,61 @@
                 navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
             }
 
-            if (autoPlay) {
-                audioPlayer.play().then(() => {
-                    isPlaying = true;
-                    playBtn.textContent = '❚❚';
-                }).catch(err => console.log('Autoplay error:', err));
+            if (shouldPlay) {
+                playAudio();
             }
         }
 
-        function togglePlay() {
-            if (isPlaying) {
-                audioPlayer.pause();
-                isPlaying = false;
-                playBtn.textContent = '▶';
-            } else {
-                audioPlayer.play().then(() => {
-                    isPlaying = true;
+        function playAudio() {
+            const playPromise = audioPlayer.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
                     playBtn.textContent = '❚❚';
+                }).catch(error => {
+                    console.log("Autoplay dicegah oleh browser:", error);
+                    playBtn.textContent = '▶';
                 });
             }
         }
 
+        function togglePlay() {
+            if (audioPlayer.paused) {
+                playAudio();
+            } else {
+                audioPlayer.pause();
+                playBtn.textContent = '▶';
+            }
+        }
+
         function prevTrack() {
-            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-            loadTrack(currentTrackIndex, true);
+            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentIndex, true);
         }
 
         function nextTrack() {
-            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-            loadTrack(currentTrackIndex, true);
+            currentIndex = (currentIndex + 1) % playlist.length;
+            loadTrack(currentIndex, true);
         }
 
-        // Render single continuous list for all 41 songs
-        function renderPlaylist() {
-            playlistContainer.innerHTML = '';
-
-            playlist.forEach((track, index) => {
-                const li = document.createElement('li');
-                li.className = `playlist-item p-2.5 rounded-xl cursor-pointer flex justify-between items-center text-xs transition-all ${index === currentTrackIndex ? 'active' : ''}`;
-                
-                li.innerHTML = `
-                    <div class="flex items-center space-x-2.5 overflow-hidden pr-2">
-                        <span class="text-white/40 font-mono w-5 text-right flex-shrink-0">${index + 1}.</span>
-                        <span class="text-white/90 font-medium truncate">${track.name}</span>
-                    </div>
-                    <span class="text-[10px] text-white/40 flex-shrink-0">${index === currentTrackIndex ? '🎵 Playing' : ''}</span>
-                `;
-
-                li.onclick = () => loadTrack(index, true);
-                playlistContainer.appendChild(li);
-            });
-        }
-
-        function updateActivePlaylistItem() {
-            const items = playlistContainer.querySelectorAll('li');
-            items.forEach((item, idx) => {
-                if (idx === currentTrackIndex) {
-                    item.classList.add('active');
-                    item.querySelector('span:last-child').textContent = '🎵 Playing';
-                } else {
-                    item.classList.remove('active');
-                    item.querySelector('span:last-child').textContent = '';
-                }
-            });
-        }
-
-        playBtn.addEventListener('click', togglePlay);
-        prevBtn.addEventListener('click', prevTrack);
-        nextBtn.addEventListener('click', nextTrack);
+        likeBtn.addEventListener('click', () => {
+            if (likeBtn.textContent === '♡') {
+                likeBtn.textContent = '♥';
+                likeBtn.style.color = '#ff4d6d';
+            } else {
+                likeBtn.textContent = '♡';
+                likeBtn.style.color = 'rgba(255, 255, 255, 0.8)';
+            }
+        });
 
         audioPlayer.addEventListener('ended', nextTrack);
+
+        audioPlayer.addEventListener('play', () => {
+            playBtn.textContent = '❚❚';
+        });
+
+        audioPlayer.addEventListener('pause', () => {
+            playBtn.textContent = '▶';
+        });
 
         audioPlayer.addEventListener('timeupdate', () => {
             if (audioPlayer.duration) {
@@ -437,8 +528,20 @@
             }
         });
 
-        progressEl.addEventListener('input', () => {
-            if (audioPlayer.duration) {
-                audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration;
-            }
-        });
+        function updateActiveListItem() {
+            const allItems = listContainer.querySelectorAll('li');
+            allItems.forEach((el, i) => {
+                if (i === currentIndex) {
+                    el.classList.add('active');
+                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+        prevBtn.addEventListener('click', prevTrack);
+        nextBtn.addEventListener('click', nextTrack);
+
+        progressEl.addE
