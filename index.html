@@ -15,17 +15,81 @@
             background-color: #0c0d10;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        .container {
-            width: 300px;
-            height: 300px;
+        /* --- CONTAINER TEKS BERJALAN & KELAP-KELIP --- */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            position: absolute;
+            top: 40px;
+            padding: 10px 0;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            /* Animasi Berjalan ke Samping (Kanan ke Kiri) */
+            animation: marquee 8s linear infinite, blinkRainbow 0.6s infinite alternate;
+        }
+
+        /* Animasi Gerakan Teks Berjalan */
+        @keyframes marquee {
+            0% {
+                transform: translateX(100vw);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Animasi Warna-Warni Neon & Kelap-Kelip */
+        @keyframes blinkRainbow {
+            0% {
+                color: #ff0055;
+                text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+                opacity: 1;
+            }
+            25% {
+                color: #00ffff;
+                text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+                opacity: 0.3;
+            }
+            50% {
+                color: #00ff66;
+                text-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66;
+                opacity: 1;
+            }
+            75% {
+                color: #ff00ff;
+                text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+                opacity: 0.4;
+            }
+            100% {
+                color: #ffff00;
+                text-shadow: 0 0 10px #ffff00, 0 0 20px #ffff00;
+                opacity: 1;
+            }
+        }
+
+        /* --- STYLES ANIMASI TANGAN --- */
+        .scene {
+            position: relative;
+            width: 320px;
+            height: 320px;
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-top: 60px;
         }
 
         svg {
@@ -33,23 +97,35 @@
             height: 100%;
         }
 
-        /* Animasi Jari Tengah Naik */
-        .middle-finger {
-            transform-origin: bottom center;
-            animation: raiseFinger 2s cubic-bezier(0.4, 0, 0.2, 1) forwards infinite alternate;
+        /* Tangan Kiri (Memutar) */
+        .rotating-hand {
+            transform-origin: 90px 140px;
+            animation: spinHand 4s ease-in-out infinite alternate;
         }
 
-        @keyframes raiseFinger {
+        @keyframes spinHand {
             0% {
-                /* Posisi awal: tertekuk ke bawah (seperti mengepal) */
-                transform: translateY(65px) scaleY(0.2);
-            }
-            40% {
-                /* Diam sebentar dalam posisi mengepal */
-                transform: translateY(65px) scaleY(0.2);
+                transform: rotate(0deg) scale(0.85);
             }
             100% {
-                /* Naik penuh ke atas */
+                transform: rotate(360deg) scale(0.85);
+            }
+        }
+
+        /* Jari Tengah Tangan Utama (Naik Perlahan) */
+        .middle-finger {
+            transform-origin: 160px 115px;
+            animation: raiseMiddleFinger 3s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+        }
+
+        @keyframes raiseMiddleFinger {
+            0% {
+                transform: translateY(58px) scaleY(0.15);
+            }
+            30% {
+                transform: translateY(58px) scaleY(0.15);
+            }
+            100% {
                 transform: translateY(0) scaleY(1);
             }
         }
@@ -57,29 +133,49 @@
 </head>
 <body>
 
-    <div class="container">
-        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Jari Tengah (Bagian yang Bergerak) -->
-            <g class="middle-finger">
-                <rect x="88" y="30" width="24" height="90" rx="12" fill="#ffffff"/>
+    <!-- TEKS BERJALAN & WARNA-WARNI KELAP-KELIP -->
+    <div class="marquee-container">
+        <div class="marquee-text">Hahahaha, you idiot</div>
+    </div>
+
+    <!-- ANIMASI TANGAN -->
+    <div class="scene">
+        <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            
+            <!-- TANGAN KIRI (MEMUTAR) -->
+            <g class="rotating-hand">
+                <path d="M 65 150 L 115 150 L 110 190 L 70 190 Z" fill="#666666"/>
+                <rect x="60" y="110" width="50" height="45" rx="15" fill="#888888"/>
+                <rect x="55" y="115" width="18" height="35" rx="8" fill="#aaaaaa"/>
+                <path d="M 70 125 C 70 110, 100 115, 105 130 Z" fill="#bbbbbb"/>
             </g>
 
-            <!-- Jari Kelingking (Tertekuk) -->
-            <rect x="142" y="95" width="22" height="45" rx="11" fill="#dddddd"/>
-            
-            <!-- Jari Manis (Tertekuk) -->
-            <rect x="116" y="90" width="22" height="50" rx="11" fill="#eeeeee"/>
+            <!-- TANGAN UTAMA (JARI TENGAH NAIK) -->
+            <g class="main-hand">
+                <!-- Jari Tengah (Naik dari dalam kepalan) -->
+                <g class="middle-finger">
+                    <rect x="148" y="35" width="24" height="85" rx="12" fill="#ffffff"/>
+                </g>
 
-            <!-- Jari Telunjuk (Tertekuk) -->
-            <rect x="62" y="90" width="22" height="50" rx="11" fill="#eeeeee"/>
+                <!-- Jari Manis -->
+                <rect x="175" y="92" width="22" height="48" rx="11" fill="#cccccc"/>
 
-            <!-- Ibu Jari / Jempol (Menutup di depan) -->
-            <path d="M 45 115 C 45 100, 75 105, 90 120 C 95 125, 85 140, 70 140 C 55 140, 45 130, 45 115 Z" fill="#ffffff"/>
+                <!-- Jari Kelingking -->
+                <rect x="200" y="98" width="20" height="42" rx="10" fill="#aaaaaa"/>
 
-            <!-- Telapak & Pergelangan Tangan -->
-            <path d="M 55 125 L 145 125 L 140 180 L 60 180 Z" fill="#cccccc"/>
+                <!-- Jari Telunjuk -->
+                <rect x="123" y="92" width="22" height="48" rx="11" fill="#cccccc"/>
+
+                <!-- Ibu Jari -->
+                <path d="M 110 118 C 110 102, 140 108, 155 122 C 160 128, 150 142, 135 142 C 120 142, 110 132, 110 118 Z" fill="#ffffff"/>
+
+                <!-- Telapak Tangan -->
+                <path d="M 118 130 L 202 130 L 195 195 L 125 195 Z" fill="#e0e0e0"/>
+            </g>
+
         </svg>
     </div>
 
 </body>
-</html>
+                    </html>
+                    
