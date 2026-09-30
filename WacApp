@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat P2P (Tanpa Database)</title>
+    <!-- Import Library PeerJS -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0d0f12;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .connection-box {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .id-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px;
+            border-radius: 6px;
+            word-break: break-all;
+            margin-bottom: 8px;
+            font-family: monospace;
+            color: #00ffcc;
+        }
+
+        .connect-input {
+            display: flex;
+            gap: 5px;
+        }
+
+        .connect-input input {
+            flex: 1;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .connect-input button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            word-wrap: break-word;
+        }
+
+        .message.received {
+            background: rgba(255, 255, 255, 0.15);
+            align-self: flex-start;
+        }
+
+        .message.sent {
+            background: #007aff;
+            align-self: flex-end;
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .status {
+            color: #ffc107;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">🔒 CHAT P2P (TANPA DATABASE)</div>
+
+        <div class="connection-box">
+            <div>ID Kamu (Bagikan ke teman):</div>
+            <div class="id-display" id="my-id">Memuat ID...</div>
+
+            <div class="connect-input">
+                <input type="text" id="other-id" placeholder="Masukkan ID Teman...">
+                <button onclick="connectToPeer()">Hubungkan</button>
+            </div>
+            <div class="status" id="status-text">Status: Belum Terhubung</div>
+        </div>
+
+        <div class="chat-messages" id="chatBox"></div>
+
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="Ketik pesan..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Kirim</button>
+        </div>
+    </div>
+
+    <script>
+        // Membuat Peer baru secara otomatis
+        const peer = new Peer();
+        let conn = null;
+
+        // Tampilkan ID unik pengguna saat berhasil dibuat
+        peer.on('open', (id) => {
+            document.getElementById('my-id').textContent = id;
+        });
+
+        // Menerima Koneksi Masuk dari Teman
+        peer.on('connection', (connection) => {
+            conn = connection;
+            setupConnection();
+        });
+
+        // Menghubungkan ke ID Teman
+        function connectToPeer() {
+            const otherId = document.getElementById('other-id').value.trim();
+            if (otherId) {
+                document.getElementById('status-text').textContent = "Status: Menghubungkan...";
+                conn = peer.connect(otherId);
+                setupConnection();
+            }
+        }
+
+        // Pengaturan Event saat Terhubung
+        function setupConnection() {
+            conn.on('open', () => {
+                document.getElementById('status-text').textContent = "Status: Terhubung dengan teman!";
+                document.getElementById('status-text').style.color = "#28a745";
+            });
+
+            // Mendengar pesan masuk
+            conn.on('data', (data) => {
+                addMessage(data, 'received');
+            });
+
+            conn.on('close', () => {
+                document.getElementById('status-text').textContent = "Status: Terputus";
+                document.getElementById('status-text').style.color = "#dc3545";
+            });
+        }
+
+        // Fungsi Mengirim Pesan
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (message && conn && conn.open) {
+                conn.send(message); // Kirim pesan langsung ke teman
+                addMessage(message, 'sent');
+                input.value = '';
+            } else if (!conn || !conn.open) {
+                alert("Kamu belum terhubung dengan teman! Masukkan ID Teman terlebih dahulu.");
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addMessage(text, type) {
+            const chatBox = document.getElementById('chatBox');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${type}`;
+            msgDiv.textContent = text;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
