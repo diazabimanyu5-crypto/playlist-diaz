@@ -23,7 +23,7 @@
         .controls{display:flex;justify-content:space-between;align-items:center;padding:10px 10px 0}
         .btn-icon{background:none;border:none;color:rgba(255,255,255,0.8);font-size:16px;cursor:pointer}
         .btn-main{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
-        .btn-play{background:rgba(255,255,255,0.95);color:#000;width:48px;height:48px;border-radius:50%;font-size:18px}
+        .btn-play{background:rgba(255,255,255,0.95);color:#000;width:48px;height:48px;border-radius:50%;font-size:18px;display:flex;justify-content:center;align-items:center}
         .playlist-card{padding:16px 18px}
         .playlist-header{font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:12px;text-align:left}
         #list{text-align:left;list-style:none;max-height:240px;overflow-y:auto}
@@ -33,6 +33,7 @@
         .bottom-nav{margin-top:0;padding:10px 0;display:flex;justify-content:space-around;border-radius:16px}
         .nav-item{color:rgba(255,255,255,0.5);font-size:18px}
         .nav-item.active{color:#fff}
+        .status-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,0.2);margin-bottom:8px;display:inline-block}
     </style>
 </head>
 <body>
@@ -47,6 +48,7 @@
         </div>
 
         <div class="player-card">
+            <div id="status" class="status-badge">Ready</div>
             <div class="song-title" id="title">Memuat...</div>
             <div class="marquee-container">
                 <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
@@ -78,7 +80,7 @@
             <span class="nav-item">📚</span>
         </div>
 
-        <audio id="audio-player" preload="auto"></audio>
+        <audio id="audio-player" preload="auto" crossorigin="anonymous"></audio>
     </div>
 
     <script>
@@ -138,19 +140,13 @@
         const currentTimeEl = document.getElementById('current-time');
         const durationEl = document.getElementById('duration');
         const listContainer = document.getElementById('list');
-        const nextAudioBuffer = new Audio();
+        const statusEl = document.getElementById('status');
 
         function formatTime(sec) {
             if (isNaN(sec) || sec === 0) return "0:00";
             const m = Math.floor(sec / 60);
             const s = Math.floor(sec % 60);
             return `${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-
-        function preloadNextTrack() {
-            const nextIndex = (currentIndex + 1) % playlist.length;
-            nextAudioBuffer.src = playlist[nextIndex].url;
-            nextAudioBuffer.preload = "auto";
         }
 
         function loadTrack(index, shouldPlay = false) {
@@ -161,21 +157,33 @@
             progressEl.value = 0;
             currentTimeEl.textContent = "0:00";
             durationEl.textContent = "0:00";
+            statusEl.textContent = "Memuat Audio...";
+            statusEl.style.background = "rgba(255,200,0,0.3)";
+            
             updateActiveListItem();
             audioPlayer.src = track.url;
+            audioPlayer.load();
+
             if (shouldPlay) playAudio();
         }
 
         function playAudio() {
-            audioPlayer.play().then(() => {
-                playBtn.textContent = '❚❚';
-                preloadNextTrack();
-            }).catch(() => { playBtn.textContent = '▶'; });
+            const playPromise = audioPlayer.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    playBtn.textContent = '❚❚';
+                    statusEl.textContent = "Memutar";
+                    statusEl.style.background = "rgba(0,255,100,0.3)";
+                }).catch(() => {
+                    playBtn.textContent = '▶';
+                    statusEl.textContent = "Klik Play";
+                });
+            }
         }
 
         function togglePlay() {
             if (audioPlayer.paused) { playAudio(); } 
-            else { audioPlayer.pause(); playBtn.textContent = '▶'; }
+            else { audioPlayer.pause(); playBtn.textContent = '▶'; statusEl.textContent = "Jeda"; }
         }
 
         function updateActiveListItem() {
@@ -186,9 +194,22 @@
             });
         }
 
-        audioPlayer.addEventListener('ended', () => { loadTrack((currentIndex + 1) % playlist.length, true); });
-        audioPlayer.addEventListener('play', () => { playBtn.textContent = '❚❚'; preloadNextTrack(); });
-        audioPlayer.addEventListener('pause', () => { playBtn.textContent = '▶'; });
+        // Event listener penanganan buffering
+        audioPlayer.addEventListener('waiting', () => {
+            statusEl.textContent = "Buffering...";
+            statusEl.style.background = "rgba(255,100,0,0.4)";
+        });
+
+        audioPlayer.addEventListener('playing', () => {
+            statusEl.textContent = "Memutar";
+            statusEl.style.background = "rgba(0,255,100,0.3)";
+            playBtn.textContent = '❚❚';
+        });
+
+        audioPlayer.addEventListener('ended', () => { 
+            loadTrack((currentIndex + 1) % playlist.length, true); 
+        });
+
         audioPlayer.addEventListener('timeupdate', () => {
             if (audioPlayer.duration) {
                 progressEl.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
@@ -216,5 +237,5 @@
         loadTrack(0, false);
     </script>
 </body>
-</html>
-
+    </html>
+    
