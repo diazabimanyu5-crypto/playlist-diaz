@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player - Smart Preload</title>
+    <title>Music Player</title>
     <style>
         * {
             box-sizing: border-box;
@@ -301,7 +300,7 @@
 </head>
 <body>
 
-    <!-- Video Background Animasi (Muted / Tanpa Suara) -->
+    <!-- Video Background Animasi -->
     <video autoplay muted loop playsinline id="bg-video">
         <source src="https://files.catbox.moe/ypad4h.mp4" type="video/mp4">
     </video>
@@ -312,7 +311,7 @@
 
         <!-- Poster Gambar -->
         <div class="poster-container">
-            <img src="sampul.jpg" alt="Poster" class="poster" onerror="this.src='https://placehold.co/310x310/1a1a1a/ffffff?text=Music+Player'">
+            <img src="sampul.jpg" alt="Poster" class="poster">
         </div>
 
         <!-- Pemutar Musik -->
@@ -341,7 +340,7 @@
             </div>
         </div>
 
-        <!-- Kartu Playlist (Semua 41 Lagu) -->
+        <!-- Kartu Playlist -->
         <div class="playlist-card">
             <div class="playlist-header" id="playlist-count">PLAYLIST • 41 LAGU</div>
             <ul id="list"></ul>
@@ -354,12 +353,12 @@
             <span class="nav-item">📚</span>
         </div>
 
-        <!-- Audio Element dengan Smart Preload AUTO -->
+        <!-- Tag Audio dengan Preload Auto untuk Mencegah Lag -->
         <audio id="audio-player" preload="auto"></audio>
     </div>
 
     <script>
-        // Memastikan suara video latar belakang mati
+        // Muted video background agar tidak memengaruhi pemutaran lagu
         const bgVideo = document.getElementById('bg-video');
         if (bgVideo) {
             bgVideo.muted = true;
@@ -425,14 +424,8 @@
         const playlistCountEl = document.getElementById('playlist-count');
         const likeBtn = document.getElementById('like-btn');
 
-        // Objek Audio tersembunyi untuk Smart Preload (Mencegah Lag / Buffering)
+        // Audio tersembunyi untuk mengunduh lagu berikutnya secara diam-diam
         const nextAudioBuffer = new Audio();
-
-        function preloadNextTrack() {
-            const nextIndex = (currentIndex + 1) % playlist.length;
-            nextAudioBuffer.src = playlist[nextIndex].url;
-            nextAudioBuffer.preload = "auto"; // Otomatis mengunduh lagu berikutnya di latar belakang
-        }
 
         playlistCountEl.textContent = `PLAYLIST • ${playlist.length} LAGU`;
 
@@ -441,6 +434,12 @@
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function preloadNextTrack() {
+            const nextIndex = (currentIndex + 1) % playlist.length;
+            nextAudioBuffer.src = playlist[nextIndex].url;
+            nextAudioBuffer.preload = "auto";
         }
 
         function loadTrack(index, shouldPlay = false) {
@@ -458,8 +457,6 @@
 
             if (shouldPlay) {
                 playAudio();
-            } else {
-                preloadNextTrack();
             }
         }
 
@@ -468,9 +465,9 @@
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     playBtn.textContent = '❚❚';
-                    preloadNextTrack(); // Mulai mengunduh lagu berikutnya saat lagu ini diputar
+                    preloadNextTrack(); // Download lagu berikutnya secara tersembunyi
                 }).catch(error => {
-                    console.log("Autoplay ditahan oleh kebijakan browser:", error);
+                    console.log("Autoplay dihambat oleh kebijakan browser:", error);
                     playBtn.textContent = '▶';
                 });
             }
@@ -529,7 +526,6 @@
             allItems.forEach((el, i) => {
                 if (i === currentIndex) {
                     el.classList.add('active');
-                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
                     el.classList.remove('active');
                 }
@@ -541,4 +537,13 @@
         nextBtn.addEventListener('click', nextTrack);
 
         progressEl.addEventListener('input', () => {
-            if (audioPlayer.du
+            if (audioPlayer.duration) {
+                audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration;
+            }
+        });
+
+        function renderList() {
+            listContainer.innerHTML = '';
+            playlist.forEach((track, index) => {
+                const item = document.createElement('li');
+              
