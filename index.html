@@ -5,330 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Player</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body { 
-            background: #0a0b0d;
-            min-height: 100vh;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 10px;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Video Background */
-        #bg-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            z-index: 1;
-            filter: brightness(0.4);
-            pointer-events: none;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 390px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Header "NOW PLAYING" */
-        .header-title {
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Poster Image Container */
-        .poster-container {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            max-height: 310px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            margin-bottom: 20px;
-            background: #1a1a1a;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .poster {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Glassmorphism Player Card */
-        .player-card {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 22px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .song-info {
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-
-        .song-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Marquee Teks Artis */
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        .song-artist {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.85);
-            display: inline-block;
-            padding-left: 100%;
-            animation: marquee 10s linear infinite;
-            font-weight: 500;
-        }
-
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            margin-bottom: 12px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 2px;
-            cursor: pointer;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-        }
-
-        .time-stamps {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 6px;
-            font-weight: 500;
-        }
-
-        /* Player Controls */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 10px 0 10px;
-        }
-
-        .btn-icon {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-main {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 22px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s ease;
-        }
-
-        .btn-main:active {
-            transform: scale(0.88);
-        }
-
-        .btn-play {
-            background: rgba(255, 255, 255, 0.95);
-            color: #000000;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            font-size: 18px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Glassmorphism Playlist Card */
-        .playlist-card {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 22px;
-            padding: 16px 18px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-
-        .playlist-header {
-            font-size: 13px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 12px;
-            text-align: left;
-        }
-
-        #list { 
-            text-align: left; 
-            padding: 0; 
-            list-style: none; 
-            margin: 0;
-            max-height: 240px;
-            overflow-y: auto;
-        }
-
-        #list::-webkit-scrollbar {
-            width: 4px;
-        }
-        #list::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-        }
-
-        li { 
-            padding: 10px 0; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer; 
-            transition: 0.2s ease;
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        li:last-child {
-            border-bottom: none;
-        }
-
-        li.active { 
-            color: #ffffff; 
-            font-weight: 700;
-        }
-
-        .song-name-item {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 280px;
-        }
-
-        /* Bottom Navigation Bar */
-        .bottom-nav {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 16px;
-            margin-top: 14px;
-            padding: 10px 0;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .nav-item {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: #ffffff;
-        }
+        *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+        body{background:#0a0b0d;min-height:100vh;color:#fff;display:flex;justify-content:center;align-items:center;padding:15px 10px;position:relative}
+        #bg-video{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:1;filter:brightness(0.4);pointer-events:none}
+        .container{width:100%;max-width:390px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:10}
+        .header-title{font-size:13px;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,0.8);margin-bottom:20px;text-transform:uppercase}
+        .poster-container{width:100%;aspect-ratio:1/1;max-height:310px;border-radius:20px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);margin-bottom:20px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.15)}
+        .poster{width:100%;height:100%;object-fit:cover}
+        .player-card,.playlist-card,.bottom-nav{width:100%;background:rgba(0,0,0,0.45);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border-radius:22px;padding:20px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.18);box-shadow:0 8px 32px rgba(0,0,0,0.5);text-align:center}
+        .song-title{font-size:18px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .marquee-container{width:100%;overflow:hidden;white-space:nowrap}
+        .song-artist{font-size:13px;color:rgba(255,255,255,0.85);display:inline-block;padding-left:100%;animation:marquee 10s linear infinite}
+        @keyframes marquee{0%{transform:translate(0,0)}100%{transform:translate(-100%,0)}}
+        .progress-bar{width:100%;height:4px;background:rgba(255,255,255,0.25);border-radius:2px;outline:none;-webkit-appearance:none;margin-top:12px}
+        .progress-bar::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff}
+        .time-stamps{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.6);margin-top:6px}
+        .controls{display:flex;justify-content:space-between;align-items:center;padding:10px 10px 0}
+        .btn-icon{background:none;border:none;color:rgba(255,255,255,0.8);font-size:16px;cursor:pointer}
+        .btn-main{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+        .btn-play{background:rgba(255,255,255,0.95);color:#000;width:48px;height:48px;border-radius:50%;font-size:18px}
+        .playlist-card{padding:16px 18px}
+        .playlist-header{font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:12px;text-align:left}
+        #list{text-align:left;list-style:none;max-height:240px;overflow-y:auto}
+        li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;font-size:13px;color:rgba(255,255,255,0.85)}
+        li.active{color:#fff;font-weight:700}
+        .song-name-item{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;display:block}
+        .bottom-nav{margin-top:0;padding:10px 0;display:flex;justify-content:space-around;border-radius:16px}
+        .nav-item{color:rgba(255,255,255,0.5);font-size:18px}
+        .nav-item.active{color:#fff}
     </style>
 </head>
 <body>
-
-    <!-- Video Background Animasi -->
     <video autoplay muted loop playsinline id="bg-video">
         <source src="https://files.catbox.moe/ypad4h.mp4" type="video/mp4">
     </video>
 
     <div class="container">
-        <!-- Header Title -->
         <div class="header-title">NOW PLAYING</div>
-
-        <!-- Poster Gambar -->
         <div class="poster-container">
             <img src="sampul.jpg" alt="Poster" class="poster">
         </div>
 
-        <!-- Pemutar Musik -->
         <div class="player-card">
-            <div class="song-info">
-                <div class="song-title" id="title">Memuat...</div>
-                <div class="marquee-container">
-                    <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
-                </div>
+            <div class="song-title" id="title">Memuat...</div>
+            <div class="marquee-container">
+                <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
             </div>
 
-            <div class="progress-container">
-                <input type="range" id="progress" class="progress-bar" value="0" min="0" max="100">
-                <div class="time-stamps">
-                    <span id="current-time">0:00</span>
-                    <span id="duration">0:00</span>
-                </div>
+            <input type="range" id="progress" class="progress-bar" value="0" min="0" max="100">
+            <div class="time-stamps">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
             </div>
 
             <div class="controls">
@@ -340,30 +67,23 @@
             </div>
         </div>
 
-        <!-- Kartu Playlist -->
         <div class="playlist-card">
             <div class="playlist-header" id="playlist-count">PLAYLIST • 41 LAGU</div>
             <ul id="list"></ul>
         </div>
 
-        <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <span class="nav-item active">🏠</span>
             <span class="nav-item">🔍</span>
             <span class="nav-item">📚</span>
         </div>
 
-        <!-- Tag Audio dengan Preload Auto untuk Mencegah Lag -->
         <audio id="audio-player" preload="auto"></audio>
     </div>
 
     <script>
-        // Muted video background agar tidak memengaruhi pemutaran lagu
         const bgVideo = document.getElementById('bg-video');
-        if (bgVideo) {
-            bgVideo.muted = true;
-            bgVideo.volume = 0;
-        }
+        if (bgVideo) bgVideo.muted = true;
 
         const playlist = [
             { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
@@ -410,30 +130,21 @@
         ];
 
         let currentIndex = 0;
-
         const audioPlayer = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
         const titleEl = document.getElementById('title');
         const artistEl = document.getElementById('artist');
         const progressEl = document.getElementById('progress');
         const currentTimeEl = document.getElementById('current-time');
         const durationEl = document.getElementById('duration');
         const listContainer = document.getElementById('list');
-        const playlistCountEl = document.getElementById('playlist-count');
-        const likeBtn = document.getElementById('like-btn');
-
-        // Audio tersembunyi untuk mengunduh lagu berikutnya secara diam-diam
         const nextAudioBuffer = new Audio();
 
-        playlistCountEl.textContent = `PLAYLIST • ${playlist.length} LAGU`;
-
-        function formatTime(seconds) {
-            if (isNaN(seconds) || seconds === 0) return "0:00";
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        function formatTime(sec) {
+            if (isNaN(sec) || sec === 0) return "0:00";
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
         function preloadNextTrack() {
@@ -445,74 +156,39 @@
         function loadTrack(index, shouldPlay = false) {
             currentIndex = index;
             const track = playlist[currentIndex];
-            
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
             progressEl.value = 0;
             currentTimeEl.textContent = "0:00";
             durationEl.textContent = "0:00";
             updateActiveListItem();
-
             audioPlayer.src = track.url;
-
-            if (shouldPlay) {
-                playAudio();
-            }
+            if (shouldPlay) playAudio();
         }
 
         function playAudio() {
-            const playPromise = audioPlayer.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    playBtn.textContent = '❚❚';
-                    preloadNextTrack(); // Download lagu berikutnya secara tersembunyi
-                }).catch(error => {
-                    console.log("Autoplay dihambat oleh kebijakan browser:", error);
-                    playBtn.textContent = '▶';
-                });
-            }
+            audioPlayer.play().then(() => {
+                playBtn.textContent = '❚❚';
+                preloadNextTrack();
+            }).catch(() => { playBtn.textContent = '▶'; });
         }
 
         function togglePlay() {
-            if (audioPlayer.paused) {
-                playAudio();
-            } else {
-                audioPlayer.pause();
-                playBtn.textContent = '▶';
-            }
+            if (audioPlayer.paused) { playAudio(); } 
+            else { audioPlayer.pause(); playBtn.textContent = '▶'; }
         }
 
-        function prevTrack() {
-            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-            loadTrack(currentIndex, true);
+        function updateActiveListItem() {
+            const items = listContainer.querySelectorAll('li');
+            items.forEach((el, i) => {
+                if (i === currentIndex) el.classList.add('active');
+                else el.classList.remove('active');
+            });
         }
 
-        function nextTrack() {
-            currentIndex = (currentIndex + 1) % playlist.length;
-            loadTrack(currentIndex, true);
-        }
-
-        likeBtn.addEventListener('click', () => {
-            if (likeBtn.textContent === '♡') {
-                likeBtn.textContent = '♥';
-                likeBtn.style.color = '#ff4d6d';
-            } else {
-                likeBtn.textContent = '♡';
-                likeBtn.style.color = 'rgba(255, 255, 255, 0.8)';
-            }
-        });
-
-        audioPlayer.addEventListener('ended', nextTrack);
-
-        audioPlayer.addEventListener('play', () => {
-            playBtn.textContent = '❚❚';
-            preloadNextTrack();
-        });
-
-        audioPlayer.addEventListener('pause', () => {
-            playBtn.textContent = '▶';
-        });
-
+        audioPlayer.addEventListener('ended', () => { loadTrack((currentIndex + 1) % playlist.length, true); });
+        audioPlayer.addEventListener('play', () => { playBtn.textContent = '❚❚'; preloadNextTrack(); });
+        audioPlayer.addEventListener('pause', () => { playBtn.textContent = '▶'; });
         audioPlayer.addEventListener('timeupdate', () => {
             if (audioPlayer.duration) {
                 progressEl.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
@@ -521,29 +197,24 @@
             }
         });
 
-        function updateActiveListItem() {
-            const allItems = listContainer.querySelectorAll('li');
-            allItems.forEach((el, i) => {
-                if (i === currentIndex) {
-                    el.classList.add('active');
-                } else {
-                    el.classList.remove('active');
-                }
-            });
-        }
-
-        playBtn.addEventListener('click', togglePlay);
-        prevBtn.addEventListener('click', prevTrack);
-        nextBtn.addEventListener('click', nextTrack);
-
-        progressEl.addEventListener('input', () => {
-            if (audioPlayer.duration) {
-                audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration;
-            }
-        });
+        document.getElementById('play-btn').onclick = togglePlay;
+        document.getElementById('prev-btn').onclick = () => loadTrack((currentIndex - 1 + playlist.length) % playlist.length, true);
+        document.getElementById('next-btn').onclick = () => loadTrack((currentIndex + 1) % playlist.length, true);
+        progressEl.oninput = () => { if (audioPlayer.duration) audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration; };
 
         function renderList() {
             listContainer.innerHTML = '';
             playlist.forEach((track, index) => {
                 const item = document.createElement('li');
-              
+                item.innerHTML = `<span class="song-name-item">${index + 1}. ${track.name}</span>`;
+                item.onclick = () => loadTrack(index, true);
+                listContainer.appendChild(item);
+            });
+        }
+
+        renderList();
+        loadTrack(0, false);
+    </script>
+</body>
+</html>
+
