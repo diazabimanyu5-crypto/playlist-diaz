@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -158,31 +158,6 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        /* Pagination Controls Styling */
-        .page-btn {
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.7);
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .page-btn.active {
-            background: rgba(255, 255, 255, 0.95);
-            color: #000000;
-            border-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
-        }
-
-        .page-btn:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-        }
-
         /* Playlist Item Highlight */
         .playlist-item {
             transition: all 0.2s ease;
@@ -210,7 +185,7 @@
         <!-- Header Title Bar -->
         <div class="w-full flex justify-between items-center mb-4 px-2">
             <span class="text-xs font-bold tracking-widest text-white/70 uppercase">Now Playing</span>
-            <span id="current-page-badge" class="text-xs px-2.5 py-1 rounded-full bg-white/10 text-white/80 border border-white/10">Page 1 / 5</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-white/10 text-white/80 border border-white/10">Playlist Player</span>
         </div>
 
         <!-- Poster Art Display -->
@@ -253,28 +228,17 @@
             </div>
         </div>
 
+        <!-- Scrollable Full Playlist Card -->
         <div class="glass-card w-full rounded-3xl p-4 mb-3">
             <div class="flex justify-between items-center mb-3 px-1">
                 <span class="text-xs font-bold text-white/80 uppercase tracking-wider">Playlist</span>
                 <span id="total-songs-count" class="text-xs text-white/50 font-medium">41 Lagu</span>
             </div>
 
-            <!-- Dynamic Track List -->
-            <ul id="playlist-container" class="custom-scroll max-h-[220px] overflow-y-auto space-y-1 mb-4">
+            <!-- Dynamic Scrollable Track List (All 41 Songs) -->
+            <ul id="playlist-container" class="custom-scroll max-h-[280px] overflow-y-auto space-y-1">
                 <!-- Dynamically Populated Songs -->
             </ul>
-
-            <!-- Navigation Controls & Page Buttons -->
-            <div class="flex flex-col gap-2 pt-2 border-t border-white/10">
-                <div class="flex justify-between items-center px-1">
-                    <button id="prev-page-btn" class="page-btn text-[10px]">❮ Prev Page</button>
-                    <span id="page-num-display" class="text-[11px] font-bold text-white/70">1 / 5</span>
-                    <button id="next-page-btn" class="page-btn text-[10px]">Next Page ❯</button>
-                </div>
-                <div id="pagination-controls" class="flex justify-center items-center gap-1.5 overflow-x-auto py-1">
-                    <!-- Dynamic Numeric Page Buttons -->
-                </div>
-            </div>
         </div>
 
         <!-- Audio Element -->
@@ -322,5 +286,159 @@
             { id: 29, name: "Creep", artist: "Radiohead", url: "https://files.catbox.moe/am615v.mp3" },
             { id: 30, name: "Exit Music", artist: "Radiohead", url: "https://files.catbox.moe/vq2k0n.mp3" },
             { id: 31, name: "Stand By Me", artist: "Oasis", url: "https://files.catbox.moe/9tam7j.mp3" },
-            { id: 32, name: "Married With Children", artist: "O
-```
+            { id: 32, name: "Married With Children", artist: "Oasis", url: "https://files.catbox.moe/fif5lo.mp3" },
+            { id: 33, name: "Don't Go Away", artist: "Oasis", url: "https://files.catbox.moe/fcfzmu.mp3" },
+            { id: 34, name: "Supersonic", artist: "Oasis", url: "https://files.catbox.moe/qzrzft.mp3" },
+            { id: 35, name: "Sambutlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/pgijz3.mp3" },
+            { id: 36, name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/rllra6.mp3" },
+            { id: 37, name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/v3ebyu.mp3" },
+            { id: 38, name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/1x27ee.mp3" },
+            { id: 39, name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/djolg6.mp3" },
+            { id: 40, name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/p1495a.mp3" },
+            { id: 41, name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0v0mn4.mp3" }
+        ];
+
+        // State Tracking Variables
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+        // DOM Element Cache
+        const audioPlayer = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const titleEl = document.getElementById('title');
+        const artistEl = document.getElementById('artist');
+        const progressEl = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const playlistContainer = document.getElementById('playlist-container');
+        const likeBtn = document.getElementById('like-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+
+        function formatTime(seconds) {
+            if (isNaN(seconds) || seconds === 0) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function loadTrack(index, autoPlay = true) {
+            if (index < 0 || index >= playlist.length) return;
+            
+            currentTrackIndex = index;
+            const track = playlist[currentTrackIndex];
+
+            titleEl.textContent = track.name;
+            artistEl.textContent = track.artist;
+            progressEl.value = 0;
+            currentTimeEl.textContent = "0:00";
+            durationEl.textContent = "0:00";
+
+            audioPlayer.src = track.url;
+            updateActivePlaylistItem();
+
+            // Auto-scroll the playlist to the active song item
+            const activeItem = playlistContainer.children[currentTrackIndex];
+            if (activeItem) {
+                activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // Set up MediaSession metadata for native browser controls
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: track.name,
+                    artist: track.artist,
+                    artwork: [{ src: 'sampul.jpg', sizes: '512x512', type: 'image/jpeg' }]
+                });
+
+                navigator.mediaSession.setActionHandler('play', () => togglePlay());
+                navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+                navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
+                navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
+            }
+
+            if (autoPlay) {
+                audioPlayer.play().then(() => {
+                    isPlaying = true;
+                    playBtn.textContent = '❚❚';
+                }).catch(err => console.log('Autoplay error:', err));
+            }
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+                playBtn.textContent = '▶';
+            } else {
+                audioPlayer.play().then(() => {
+                    isPlaying = true;
+                    playBtn.textContent = '❚❚';
+                });
+            }
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrackIndex, true);
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            loadTrack(currentTrackIndex, true);
+        }
+
+        // Render single continuous list for all 41 songs
+        function renderPlaylist() {
+            playlistContainer.innerHTML = '';
+
+            playlist.forEach((track, index) => {
+                const li = document.createElement('li');
+                li.className = `playlist-item p-2.5 rounded-xl cursor-pointer flex justify-between items-center text-xs transition-all ${index === currentTrackIndex ? 'active' : ''}`;
+                
+                li.innerHTML = `
+                    <div class="flex items-center space-x-2.5 overflow-hidden pr-2">
+                        <span class="text-white/40 font-mono w-5 text-right flex-shrink-0">${index + 1}.</span>
+                        <span class="text-white/90 font-medium truncate">${track.name}</span>
+                    </div>
+                    <span class="text-[10px] text-white/40 flex-shrink-0">${index === currentTrackIndex ? '🎵 Playing' : ''}</span>
+                `;
+
+                li.onclick = () => loadTrack(index, true);
+                playlistContainer.appendChild(li);
+            });
+        }
+
+        function updateActivePlaylistItem() {
+            const items = playlistContainer.querySelectorAll('li');
+            items.forEach((item, idx) => {
+                if (idx === currentTrackIndex) {
+                    item.classList.add('active');
+                    item.querySelector('span:last-child').textContent = '🎵 Playing';
+                } else {
+                    item.classList.remove('active');
+                    item.querySelector('span:last-child').textContent = '';
+                }
+            });
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+        prevBtn.addEventListener('click', prevTrack);
+        nextBtn.addEventListener('click', nextTrack);
+
+        audioPlayer.addEventListener('ended', nextTrack);
+
+        audioPlayer.addEventListener('timeupdate', () => {
+            if (audioPlayer.duration) {
+                progressEl.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+                durationEl.textContent = formatTime(audioPlayer.duration);
+            }
+        });
+
+        progressEl.addEventListener('input', () => {
+            if (audioPlayer.duration) {
+                audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration;
+            }
+        });
