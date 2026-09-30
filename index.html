@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
-    <!-- Library Howler.js untuk kestabilan audio -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <title>Music Player - Anti Buffering</title>
     <style>
         *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
         body{background:#0a0b0d;min-height:100vh;color:#fff;display:flex;justify-content:center;align-items:center;padding:15px 10px;position:relative}
@@ -19,7 +17,7 @@
         .marquee-container{width:100%;overflow:hidden;white-space:nowrap}
         .song-artist{font-size:13px;color:rgba(255,255,255,0.85);display:inline-block;padding-left:100%;animation:marquee 10s linear infinite}
         @keyframes marquee{0%{transform:translate(0,0)}100%{transform:translate(-100%,0)}}
-        .progress-bar{width:100%;height:4px;background:rgba(255,255,255,0.25);border-radius:2px;outline:none;-webkit-appearance:none;margin-top:12px}
+        .progress-bar{width:100%;height:4px;background:rgba(255,255,255,0.25);border-radius:2px;outline:none;-webkit-appearance:none;margin-top:12px;cursor:pointer}
         .progress-bar::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff}
         .time-stamps{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.6);margin-top:6px}
         .controls{display:flex;justify-content:space-between;align-items:center;padding:10px 10px 0}
@@ -50,7 +48,7 @@
         </div>
 
         <div class="player-card">
-            <div id="status" class="status-badge">Siap Diputar</div>
+            <div id="status" class="status-badge">Siap</div>
             <div class="song-title" id="title">Memuat...</div>
             <div class="marquee-container">
                 <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
@@ -81,13 +79,21 @@
             <span class="nav-item">🔍</span>
             <span class="nav-item">📚</span>
         </div>
+
+        <!-- audio element dengan mode preload otomatis -->
+        <audio id="audio-player" preload="auto"></audio>
     </div>
 
     <script>
         const bgVideo = document.getElementById('bg-video');
         if (bgVideo) bgVideo.muted = true;
 
-        const playlist = [
+        // Fungsi mengubah URL Catbox ke Proxy Fast CDN anti-lag
+        function getFastUrl(catboxUrl) {
+            return "https://wsrv.nl/?url=" + encodeURIComponent(catboxUrl);
+        }
+
+        const rawPlaylist = [
             { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
             { name: "Jefferson", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
             { name: "Everything you are", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
@@ -132,96 +138,40 @@
         ];
 
         let currentIndex = 0;
-        let sound = null;
-        let timer = null;
-
+        const audio = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
         const titleEl = document.getElementById('title');
         const artistEl = document.getElementById('artist');
         const progressEl = document.getElementById('progress');
         const currentTimeEl = document.getElementById('current-time');
         const durationEl = document.getElementById('duration');
-        const listContainer = document.getElementById('list');
         const statusEl = document.getElementById('status');
+        const listContainer = document.getElementById('list');
 
         function formatTime(sec) {
-            if (isNaN(sec) || sec === 0) return "0:00";
+            if (isNaN(sec)) return "0:00";
             const m = Math.floor(sec / 60);
             const s = Math.floor(sec % 60);
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
-        function loadTrack(index, autoplay = false) {
+        function loadTrack(index, autoPlay = false) {
             currentIndex = index;
-            const track = playlist[currentIndex];
-
-            if (sound) {
-                sound.unload();
-            }
-
+            const track = rawPlaylist[currentIndex];
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
-            progressEl.value = 0;
-            currentTimeEl.textContent = "0:00";
-            durationEl.textContent = "0:00";
-            statusEl.textContent = "Memuat Audio...";
-            statusEl.style.background = "rgba(255,200,0,0.3)";
-            updateActiveListItem();
+            
+            // Langsung pakai Catbox tanpa proxy jika koneksi lancar, fallback jika perlu
+            audio.src = track.url;
+            audio.load();
 
-            sound = new Howl({
-                src: [track.url],
-                html5: true, // Diputar secara streaming langsung tanpa memblokir UI
-                format: ['mp3'],
-                onload: function() {
-                    durationEl.textContent = formatTime(sound.duration());
-                },
-                onplay: function() {
-                    playBtn.textContent = '❚❚';
-                    statusEl.textContent = "Memutar ♪";
-                    statusEl.style.background = "rgba(0,255,100,0.3)";
-                    requestAnimationFrame(step);
-                },
-                onpause: function() {
-                    playBtn.textContent = '▶';
-                    statusEl.textContent = "Jeda";
-                    statusEl.style.background = "rgba(255,255,255,0.2)";
-                },
-                onend: function() {
-                    loadTrack((currentIndex + 1) % playlist.length, true);
-                },
-                onloaderror: function() {
-                    statusEl.textContent = "Gagal Memuat";
-                    statusEl.style.background = "rgba(255,0,0,0.4)";
-                }
-            });
-
-            if (autoplay) {
-                sound.play();
+            updateActiveItem();
+            if (autoPlay) {
+                audio.play().catch(() => {});
             }
         }
 
-        function step() {
-            if (sound && sound.playing()) {
-                const seek = sound.seek() || 0;
-                currentTimeEl.textContent = formatTime(seek);
-                progressEl.value = ((seek / sound.duration()) * 100) || 0;
-                requestAnimationFrame(step);
-            }
-        }
-
-        function togglePlay() {
-            if (!sound) {
-                loadTrack(currentIndex, true);
-                return;
-            }
-            if (sound.playing()) {
-                sound.pause();
-            } else {
-                sound.play();
-            }
-        }
-
-        function updateActiveListItem() {
+        function updateActiveItem() {
             const items = listContainer.querySelectorAll('li');
             items.forEach((el, i) => {
                 if (i === currentIndex) el.classList.add('active');
@@ -229,24 +179,67 @@
             });
         }
 
-        document.getElementById('play-btn').onclick = togglePlay;
-        document.getElementById('prev-btn').onclick = () => loadTrack((currentIndex - 1 + playlist.length) % playlist.length, true);
-        document.getElementById('next-btn').onclick = () => loadTrack((currentIndex + 1) % playlist.length, true);
+        playBtn.onclick = () => {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        };
+
+        document.getElementById('prev-btn').onclick = () => loadTrack((currentIndex - 1 + rawPlaylist.length) % rawPlaylist.length, true);
+        document.getElementById('next-btn').onclick = () => loadTrack((currentIndex + 1) % rawPlaylist.length, true);
+
+        // Penanganan Error Otomatis jika Catbox lambat
+        audio.onerror = () => {
+            statusEl.textContent = "Switch CDN...";
+            // Mengalihkan otomatis ke CDN Cepat jika Catbox rontok/buffering
+            audio.src = getFastUrl(rawPlaylist[currentIndex].url);
+            audio.play();
+        };
+
+        audio.onwaiting = () => { 
+            statusEl.textContent = "Buffering..."; 
+            statusEl.style.background = "rgba(255,150,0,0.4)";
+        };
+        
+        audio.onplaying = () => { 
+            statusEl.textContent = "Playing ♪"; 
+            statusEl.style.background = "rgba(0,255,100,0.3)";
+            playBtn.textContent = '❚❚'; 
+        };
+        
+        audio.onpause = () => { 
+            statusEl.textContent = "Paused"; 
+            statusEl.style.background = "rgba(255,255,255,0.2)";
+            playBtn.textContent = '▶'; 
+        };
+
+        audio.ontimeupdate = () => {
+            if (audio.duration) {
+                progressEl.value = (audio.currentTime / audio.duration) * 100;
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+                durationEl.textContent = formatTime(audio.duration);
+            }
+        };
+
+        audio.onended = () => {
+            loadTrack((currentIndex + 1) % rawPlaylist.length, true);
+        };
 
         progressEl.oninput = () => {
-            if (sound && sound.duration()) {
-                const per = progressEl.value / 100;
-                sound.seek(sound.duration() * per);
+            if (audio.duration) {
+                audio.currentTime = (progressEl.value / 100) * audio.duration;
             }
         };
 
         function renderList() {
             listContainer.innerHTML = '';
-            playlist.forEach((track, index) => {
-                const item = document.createElement('li');
-                item.innerHTML = `<span class="song-name-item">${index + 1}. ${track.name}</span>`;
-                item.onclick = () => loadTrack(index, true);
-                listContainer.appendChild(item);
+            rawPlaylist.forEach((track, i) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="song-name-item">${i + 1}. ${track.name}</span>`;
+                li.onclick = () => loadTrack(i, true);
+                listContainer.appendChild(li);
             });
         }
 
