@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player - Catbox Stream</title>
+    <title>Music Player - TikTok Style</title>
     <style>
         * {
             box-sizing: border-box;
@@ -31,6 +31,7 @@
             gap: 14px;
         }
 
+        /* HEADER VIDEO / POSTER CONTAINER */
         .media-card {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -49,6 +50,22 @@
             display: block;
         }
 
+        .tiktok-embed-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+        }
+
+        .tiktok-embed-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* PLAYER CONTROL CARD */
         .player-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
@@ -125,7 +142,7 @@
 
         .controls {
             display: flex;
-            justify-content: space-around;
+            justify-style: space-around;
             align-items: center;
             width: 100%;
             margin-top: 6px;
@@ -165,6 +182,7 @@
             box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
         }
 
+        /* PLAYLIST CARD */
         .playlist-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
@@ -210,6 +228,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         .playlist-item:hover {
@@ -227,9 +246,17 @@
 <body>
 
     <div class="app-container">
-        <!-- TIKTOK / ALBUM COVER CONTAINER -->
+        <!-- MEDIA DISPLAY (DAPAT DIISI GAMBAR/VIDEO TIKTOK) -->
         <div class="media-card" id="media-card">
+            <!-- Pilihan 1: Gambar Sampul Standard -->
             <img src="sampul.jpg" alt="Album Cover" class="media-content" id="album-cover">
+            
+            <!-- Pilihan 2: Video MP4 / Video TikTok Loop (Aktifkan jika ada video.mp4) -->
+            <!-- 
+            <video class="media-content" id="bg-video" autoplay loop muted playsinline>
+                <source src="video.mp4" type="video/mp4">
+            </video> 
+            -->
         </div>
 
         <!-- PLAYER CONTROLLER -->
@@ -237,7 +264,7 @@
             <div id="status" class="status-badge">Ready</div>
 
             <div class="song-info">
-                <div class="song-title" id="title">Memuat...</div>
+                <div class="song-title" id="title">Memuat Lagu...</div>
                 <div class="song-artist" id="artist">Artist</div>
             </div>
 
@@ -265,53 +292,51 @@
         </div>
     </div>
 
-    <!-- PENTING: crossOrigin ditambahkan agar Catbox tidak diblokir -->
-    <audio id="audio-player" preload="auto" crossorigin="anonymous"></audio>
+    <audio id="audio-player" preload="auto"></audio>
 
     <script>
-        // MASUKKAN LINK CATBOX ASLI ANDA DI BAWAH INI
         const playlist = [
-            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Jefferson", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Everything you are", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Bernadya", artist: "Bernadya", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Perunggu", artist: "Perunggu", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "FSTVLST full album", artist: "FSTVLST", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Full album Hindia", artist: "Hindia", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Panasea", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Kuning", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Anomali", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Track 8", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Champagne Supernova", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Don't Look Back In Anger", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Slide Away", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Wonderwall", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Who Knows", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Let Down", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "No Surprises", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Fake Plastic Trees", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Creep", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Exit Music", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Stand By Me", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Married With Children", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Don't Go Away", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Supersonic", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Sambutlah", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" },
-            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3" }
+            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", file: "1.mp3" },
+            { name: "Jefferson", artist: "Inst:diazabimanyuu_", file: "2.mp3" },
+            { name: "Everything you are", artist: "Inst:diazabimanyuu_", file: "3.mp3" },
+            { name: "Full album Bernadya", artist: "Bernadya", file: "4.mp3" },
+            { name: "Full album Perunggu", artist: "Perunggu", file: "5.mp3" },
+            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", file: "6.mp3" },
+            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", file: "7.mp3" },
+            { name: "FSTVLST full album", artist: "FSTVLST", file: "8.mp3" },
+            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", file: "9.mp3" },
+            { name: "Full album Hindia", artist: "Hindia", file: "10.mp3" },
+            { name: "Panasea", artist: "Inst:diazabimanyuu_", file: "11.mp3" },
+            { name: "Kuning", artist: "Inst:diazabimanyuu_", file: "12.mp3" },
+            { name: "Anomali", artist: "Inst:diazabimanyuu_", file: "13.mp3" },
+            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", file: "14.mp3" },
+            { name: "Track 8", artist: "Inst:diazabimanyuu_", file: "15.mp3" },
+            { name: "Champagne Supernova", artist: "Oasis", file: "16.mp3" },
+            { name: "Don't Look Back In Anger", artist: "Oasis", file: "17.mp3" },
+            { name: "Slide Away", artist: "Oasis", file: "18.mp3" },
+            { name: "Wonderwall", artist: "Oasis", file: "19.mp3" },
+            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", file: "20.mp3" },
+            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", file: "21.mp3" },
+            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", file: "22.mp3" },
+            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", file: "23.mp3" },
+            { name: "Who Knows", artist: "Inst:diazabimanyuu_", file: "24.mp3" },
+            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", file: "25.mp3" },
+            { name: "Let Down", artist: "Radiohead", file: "26.mp3" },
+            { name: "No Surprises", artist: "Radiohead", file: "27.mp3" },
+            { name: "Fake Plastic Trees", artist: "Radiohead", file: "28.mp3" },
+            { name: "Creep", artist: "Radiohead", file: "29.mp3" },
+            { name: "Exit Music", artist: "Radiohead", file: "30.mp3" },
+            { name: "Stand By Me", artist: "Oasis", file: "31.mp3" },
+            { name: "Married With Children", artist: "Oasis", file: "32.mp3" },
+            { name: "Don't Go Away", artist: "Oasis", file: "33.mp3" },
+            { name: "Supersonic", artist: "Oasis", file: "34.mp3" },
+            { name: "Sambutlah", artist: "Inst:diazabimanyuu_", file: "35.mp3" },
+            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", file: "36.mp3" },
+            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", file: "37.mp3" },
+            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", file: "38.mp3" },
+            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", file: "39.mp3" },
+            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", file: "40.mp3" },
+            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", file: "41.mp3" }
         ];
 
         let currentIndex = 0;
@@ -343,7 +368,8 @@
             titleEl.textContent = track.name;
             artistEl.textContent = track.artist;
 
-            audio.src = track.src;
+            // Memuat file dari folder music lokal
+            audio.src = `./music/${track.file}`;
             audio.load();
 
             updateActiveItem();
@@ -394,33 +420,27 @@
         };
 
         audio.onwaiting = () => {
-            statusEl.textContent = "Loading Catbox...";
+            statusEl.textContent = "Memuat Audio...";
         };
 
         audio.onplaying = () => {
-            statusEl.textContent = "Playing ♪";
+            statusEl.textContent = "Memutar ♪";
             statusEl.style.background = "rgba(0,255,136,0.2)";
             statusEl.style.color = "#00ff88";
             playBtn.textContent = '❚❚';
         };
 
         audio.onpause = () => {
-            statusEl.textContent = "Paused";
+            statusEl.textContent = "Dijeda";
             statusEl.style.background = "rgba(255,255,255,0.1)";
             statusEl.style.color = "rgba(255, 255, 255, 0.8)";
             playBtn.textContent = '▶';
         };
 
-        // Penanganan jika server Catbox lambat / sibuk
         audio.onerror = () => {
-            statusEl.textContent = "Reconnecting...";
-            statusEl.style.background = "rgba(255,165,0,0.3)";
-            statusEl.style.color = "#ffa500";
-            
-            setTimeout(() => {
-                audio.load();
-                if(!audio.paused) audio.play().catch(() => {});
-            }, 1500);
+            statusEl.textContent = "Gagal Memuat Audio";
+            statusEl.style.background = "rgba(255,0,0,0.3)";
+            statusEl.style.color = "#ff5555";
         };
 
         audio.onended = () => {
