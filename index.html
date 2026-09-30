@@ -1,264 +1,415 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
+    <title>Music Player UI - TikTok & Audio Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-        body{background:#0a0b0d;min-height:100vh;color:#fff;display:flex;justify-content:center;align-items:center;padding:15px 10px;position:relative}
-        #bg-video{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:1;filter:brightness(0.4);pointer-events:none}
-        .container{width:100%;max-width:390px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:10}
-        .header-title{font-size:13px;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,0.8);margin-bottom:20px;text-transform:uppercase}
-        .poster-container{width:100%;aspect-ratio:1/1;max-height:310px;border-radius:20px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.6);margin-bottom:20px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.15)}
-        .poster{width:100%;height:100%;object-fit:cover}
-        .player-card,.playlist-card,.bottom-nav{width:100%;background:rgba(0,0,0,0.45);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border-radius:22px;padding:20px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.18);box-shadow:0 8px 32px rgba(0,0,0,0.5);text-align:center}
-        .song-title{font-size:18px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .marquee-container{width:100%;overflow:hidden;white-space:nowrap}
-        .song-artist{font-size:13px;color:rgba(255,255,255,0.85);display:inline-block;padding-left:100%;animation:marquee 10s linear infinite}
-        @keyframes marquee{0%{transform:translate(0,0)}100%{transform:translate(-100%,0)}}
-        .progress-bar{width:100%;height:4px;background:rgba(255,255,255,0.25);border-radius:2px;outline:none;-webkit-appearance:none;margin-top:12px}
-        .progress-bar::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff}
-        .time-stamps{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.6);margin-top:6px}
-        .controls{display:flex;justify-content:space-between;align-items:center;padding:10px 10px 0}
-        .btn-icon{background:none;border:none;color:rgba(255,255,255,0.8);font-size:16px;cursor:pointer}
-        .btn-main{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
-        .btn-play{background:rgba(255,255,255,0.95);color:#000;width:48px;height:48px;border-radius:50%;font-size:18px;display:flex;justify-content:center;align-items:center}
-        .playlist-card{padding:16px 18px}
-        .playlist-header{font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:12px;text-align:left}
-        #list{text-align:left;list-style:none;max-height:240px;overflow-y:auto}
-        li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;font-size:13px;color:rgba(255,255,255,0.85)}
-        li.active{color:#fff;font-weight:700}
-        .song-name-item{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;display:block}
-        .bottom-nav{margin-top:0;padding:10px 0;display:flex;justify-content:space-around;border-radius:16px}
-        .nav-item{color:rgba(255,255,255,0.5);font-size:18px}
-        .nav-item.active{color:#fff}
-        .status-badge{font-size:10px;padding:3px 10px;border-radius:10px;background:rgba(255,255,255,0.2);margin-bottom:8px;display:inline-block}
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #08080a;
+            color: #ffffff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Scrollbar for Playlist */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(22, 22, 28, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Custom Audio Progress Range */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: rgba(255, 255, 255, 0.2);
+            height: 4px;
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -4px;
+            background-color: #ffffff;
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            transition: transform 0.1s ease;
+        }
+        input[type="range"]:active::-webkit-slider-thumb {
+            transform: scale(1.3);
+        }
+
+        /* Video Container Aspect Ratio Fix */
+        .media-container {
+            aspect-ratio: 1 / 1;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        
+        .active-song-row {
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 3px solid #3b82f6;
+        }
     </style>
 </head>
-<body>
-    <video autoplay muted loop playsinline id="bg-video">
-        <source src="https://files.catbox.moe/ypad4h.mp4" type="video/mp4">
-    </video>
+<body class="min-h-screen flex items-center justify-center p-3 sm:p-5">
 
-    <div class="container">
-        <div class="header-title">NOW PLAYING</div>
-        <div class="poster-container">
-            <img src="sampul.jpg" alt="Poster" class="poster">
+    <div class="w-full max-w-[420px] flex flex-col items-center">
+        
+        <!-- Header -->
+        <header class="w-full text-center mb-4">
+            <span class="text-[11px] font-bold tracking-[0.2em] text-gray-400 uppercase">
+                NOW PLAYING
+            </span>
+        </header>
+
+        <!-- Media Poster / Video Loop Container -->
+        <div class="media-container w-full relative rounded-2xl overflow-hidden mb-4 bg-zinc-900 border border-white/10 group">
+            <!-- Image Poster (Default / Fallback) -->
+            <img id="poster-img" src="sampul.jpg" alt="Poster Lagu" 
+                 class="w-full h-full object-cover transition-opacity duration-300"
+                 onerror="this.src='https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=800&auto=format&fit=crop'">
+
+            <!-- Video Player (If available/enabled for track or TikTok loop) -->
+            <video id="bg-video" loop muted playsinline class="absolute inset-0 w-full h-full object-cover hidden">
+                <source src="" type="video/mp4">
+            </video>
+
+            <!-- Video Toggle Badge -->
+            <button id="video-toggle-btn" class="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-medium text-white/80 border border-white/10 hover:bg-black/80 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-circle-play text-red-500"></i>
+                <span id="video-badge-text">Video Loop</span>
+            </button>
         </div>
 
-        <div class="player-card">
-            <div id="status" class="status-badge">Siap Diputar</div>
-            <div class="song-title" id="title">Memuat...</div>
-            <div class="marquee-container">
-                <div class="song-artist" id="artist">Inst:diazabimanyuu_</div>
+        <div class="glass-card w-full rounded-2xl p-5 mb-3 flex flex-col items-center shadow-xl">
+            <!-- Status Badge -->
+            <div id="status-badge" class="px-3 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
+                Ready
             </div>
 
-            <input type="range" id="progress" class="progress-bar" value="0" min="0" max="100">
-            <div class="time-stamps">
-                <span id="current-time">0:00</span>
-                <span id="duration">0:00</span>
+            <!-- Song Title & Artist -->
+            <h2 id="song-title" class="text-lg font-bold text-white text-center truncate w-full px-2">
+                Everything you are
+            </h2>
+            <p id="song-artist" class="text-xs text-gray-400 text-center mb-4 truncate w-full">
+                iazabimanyuu_
+            </p>
+
+            <!-- Progress Bar -->
+            <div class="w-full mb-1">
+                <input type="range" id="progress-bar" value="0" min="0" max="100" class="w-full">
+                <div class="flex justify-between text-[10px] text-gray-400 font-medium mt-1">
+                    <span id="current-time">0:00</span>
+                    <span id="total-duration">0:00</span>
+                </div>
             </div>
 
-            <div class="controls">
-                <button class="btn-icon" id="shuffle-btn">🔀</button>
-                <button class="btn-main" id="prev-btn">⏮</button>
-                <button class="btn-main btn-play" id="play-btn">▶</button>
-                <button class="btn-main" id="next-btn">⏭</button>
-                <button class="btn-icon" id="like-btn">♡</button>
+            <!-- Playback Controls -->
+            <div class="w-full flex items-center justify-between px-2 pt-2">
+                <!-- Shuffle -->
+                <button id="shuffle-btn" class="text-gray-400 hover:text-white transition text-sm">
+                    <i class="fa-solid fa-shuffle"></i>
+                </button>
+                
+                <!-- Prev -->
+                <button id="prev-btn" class="text-white hover:text-gray-300 transition text-xl p-2">
+                    <i class="fa-solid fa-backward-step"></i>
+                </button>
+
+                <!-- Play/Pause -->
+                <button id="play-btn" class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center text-lg hover:scale-105 active:scale-95 transition shadow-lg shadow-white/10">
+                    <i id="play-icon" class="fa-solid fa-play ml-0.5"></i>
+                </button>
+
+                <!-- Next -->
+                <button id="next-btn" class="text-white hover:text-gray-300 transition text-xl p-2">
+                    <i class="fa-solid fa-forward-step"></i>
+                </button>
+
+                <!-- Heart / Favorite -->
+                <button id="like-btn" class="text-gray-400 hover:text-rose-500 transition text-sm">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
             </div>
         </div>
 
-        <div class="playlist-card">
-            <div class="playlist-header" id="playlist-count">PLAYLIST • 41 LAGU</div>
-            <ul id="list"></ul>
-        </div>
+        <div class="glass-card w-full rounded-2xl p-4 flex flex-col shadow-xl">
+            <div class="flex items-center justify-between mb-3 px-1">
+                <span class="text-[11px] font-bold text-gray-400 tracking-wider">
+                    PLAYLIST • <span id="track-count">41</span> LAGU
+                </span>
+                <button id="autoplay-toggle" class="text-[10px] text-gray-400 hover:text-white flex items-center gap-1">
+                    <span>Autoplay: ON</span>
+                </button>
+            </div>
 
-        <div class="bottom-nav">
-            <span class="nav-item active">🏠</span>
-            <span class="nav-item">🔍</span>
-            <span class="nav-item">📚</span>
+            <!-- Playlist Scroll Container -->
+            <ul id="playlist-container" class="max-h-[220px] overflow-y-auto space-y-1 pr-1">
+                <!-- Dynamic Items Inserted via JS -->
+            </ul>
         </div>
-
-        <audio id="audio-player" preload="metadata"></audio>
     </div>
 
-    <script>
-        const bgVideo = document.getElementById('bg-video');
-        if (bgVideo) bgVideo.muted = true;
+    <!-- Hidden Audio Element -->
+    <audio id="audio-element" preload="auto"></audio>
 
+    <script>
+        // List Lagu Lengkap
         const playlist = [
-            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/6ewg4x.mp3" },
-            { name: "Jefferson", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9vcdbd.mp3" },
-            { name: "Everything you are", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/q14tmt.mp3" },
-            { name: "Full album Bernadya", artist: "Bernadya", url: "https://files.catbox.moe/d3owq2.mp3" },
-            { name: "Full album Perunggu", artist: "Perunggu", url: "https://files.catbox.moe/71u2au.mp3" },
-            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/qv16ar.mp3" },
-            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/nmmb6s.mp3" },
-            { name: "FSTVLST full album", artist: "FSTVLST", url: "https://files.catbox.moe/e21vyk.mp3" },
-            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", url: "https://files.catbox.moe/do8aaz.mp3" },
-            { name: "Full album Hindia", artist: "Hindia", url: "https://files.catbox.moe/rz5l15.mp3" },
-            { name: "Panasea", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/kynaza.mp3" },
-            { name: "Kuning", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/myjyb8.mp3" },
-            { name: "Anomali", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0zrnxd.mp3" },
-            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/7s5q5z.mp3" },
-            { name: "Track 8", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/9kq1w9.mp3" },
-            { name: "Champagne Supernova", artist: "Oasis", url: "https://files.catbox.moe/e41vv4.mp3" },
-            { name: "Don't Look Back In Anger", artist: "Oasis", url: "https://files.catbox.moe/uxynqm.mp3" },
-            { name: "Slide Away", artist: "Oasis", url: "https://files.catbox.moe/tslath.mp3" },
-            { name: "Wonderwall", artist: "Oasis", url: "https://files.catbox.moe/64ylcp.mp3" },
-            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/zskwa1.mp3" },
-            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/b270xq.mp3" },
-            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/o5azqh.mp3" },
-            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/xrz84p.mp3" },
-            { name: "Who Knows", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/tvltgy.mp3" },
-            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/r4epfg.mp3" },
-            { name: "Let Down", artist: "Radiohead", url: "https://files.catbox.moe/cpy5fk.mp3" },
-            { name: "No Surprises", artist: "Radiohead", url: "https://files.catbox.moe/1egzv1.mp3" },
-            { name: "Fake Plastic Trees", artist: "Radiohead", url: "https://files.catbox.moe/tww0an.mp3" },
-            { name: "Creep", artist: "Radiohead", url: "https://files.catbox.moe/am615v.mp3" },
-            { name: "Exit Music", artist: "Radiohead", url: "https://files.catbox.moe/vq2k0n.mp3" },
-            { name: "Stand By Me", artist: "Oasis", url: "https://files.catbox.moe/9tam7j.mp3" },
-            { name: "Married With Children", artist: "Oasis", url: "https://files.catbox.moe/fif5lo.mp3" },
-            { name: "Don't Go Away", artist: "Oasis", url: "https://files.catbox.moe/fcfzmu.mp3" },
-            { name: "Supersonic", artist: "Oasis", url: "https://files.catbox.moe/qzrzft.mp3" },
-            { name: "Sambutlah", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/pgijz3.mp3" },
-            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/rllra6.mp3" },
-            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/v3ebyu.mp3" },
-            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/1x27ee.mp3" },
-            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/djolg6.mp3" },
-            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/p1495a.mp3" },
-            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", url: "https://files.catbox.moe/0v0mn4.mp3" }
+            { name: "Sandiwara semu", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Jefferson", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Everything you are", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "video.mp4" },
+            { name: "Full album Bernadya", artist: "Bernadya", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Full album Perunggu", artist: "Perunggu", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Sekian, Terima Kasih", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Bersandarlah", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "FSTVLST full album", artist: "FSTVLST", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Full album Paradoks Diametral", artist: "Paradoks Diametral", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Full album Hindia", artist: "Hindia", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Panasea", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Kuning", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Anomali", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "ATAS NAMA", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Track 8", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Champagne Supernova", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Don't Look Back In Anger", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Slide Away", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Wonderwall", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Tinky Winky full album", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Ceritaku Ceritamu", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Kita Kubur Sampai Mati", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Ruang Sendiri", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Who Knows", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "10 Menit Untuk Selamanya", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Let Down", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "No Surprises", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Fake Plastic Trees", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Creep", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Exit Music", artist: "Radiohead", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Stand By Me", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Married With Children", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Don't Go Away", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Supersonic", artist: "Oasis", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Sambutlah", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Bertaruh Pada Api", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Metafora Berpelukan", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Lautan Bunga Berwarna Terang", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Disarankan Di Bandung", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Lagu Selepas Hujan", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" },
+            { name: "Pop Kinetik", artist: "Inst:diazabimanyuu_", src: "https://files.catbox.moe/xxxxxx.mp3", video: "" }
         ];
 
-        let currentIndex = 0;
-        let isUsingProxy = false;
-        const audioPlayer = document.getElementById('audio-player');
-        const playBtn = document.getElementById('play-btn');
-        const titleEl = document.getElementById('title');
-        const artistEl = document.getElementById('artist');
-        const progressEl = document.getElementById('progress');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationEl = document.getElementById('duration');
-        const listContainer = document.getElementById('list');
-        const statusEl = document.getElementById('status');
+        // Player DOM References
+        let currentIndex = 2; // Default starting track index (Everything you are)
+        let isShuffle = false;
+        let isLiked = false;
+        let isVideoMode = false;
 
-        function formatTime(sec) {
-            if (isNaN(sec) || sec === 0) return "0:00";
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60);
+        const audio = document.getElementById('audio-element');
+        const bgVideo = document.getElementById('bg-video');
+        const posterImg = document.getElementById('poster-img');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const songTitle = document.getElementById('song-title');
+        const songArtist = document.getElementById('song-artist');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const totalDurationEl = document.getElementById('total-duration');
+        const statusBadge = document.getElementById('status-badge');
+        const playlistContainer = document.getElementById('playlist-container');
+        const trackCount = document.getElementById('track-count');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const likeBtn = document.getElementById('like-btn');
+        const videoToggleBtn = document.getElementById('video-toggle-btn');
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
         function loadTrack(index, shouldPlay = false) {
             currentIndex = index;
-            isUsingProxy = false;
             const track = playlist[currentIndex];
-            titleEl.textContent = track.name;
-            artistEl.textContent = track.artist;
-            progressEl.value = 0;
-            currentTimeEl.textContent = "0:00";
-            durationEl.textContent = "0:00";
-            statusEl.textContent = "Menghubungkan...";
-            statusEl.style.background = "rgba(255,200,0,0.3)";
+
+            songTitle.textContent = track.name;
+            songArtist.textContent = track.artist;
             
-            updateActiveListItem();
-            audioPlayer.src = track.url;
+            audio.src = track.src;
+            audio.load();
+
+            // Video loop handler
+            if (track.video && isVideoMode) {
+                bgVideo.src = track.video;
+                bgVideo.classList.remove('hidden');
+                posterImg.classList.add('opacity-0');
+                bgVideo.play().catch(() => {});
+            } else {
+                bgVideo.pause();
+                bgVideo.classList.add('hidden');
+                posterImg.classList.remove('opacity-0');
+            }
+
+            updatePlaylistUI();
 
             if (shouldPlay) {
                 playAudio();
+            } else {
+                setPauseState();
             }
         }
 
         function playAudio() {
-            const playPromise = audioPlayer.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    playBtn.textContent = '❚❚';
-                    statusEl.textContent = "Memutar ♪";
-                    statusEl.style.background = "rgba(0,255,100,0.3)";
-                }).catch((err) => {
-                    playBtn.textContent = '▶';
-                    statusEl.textContent = "Klik ▶ Untuk Putar";
-                    statusEl.style.background = "rgba(255,255,255,0.2)";
-                });
-            }
-        }
-
-        function togglePlay() {
-            if (audioPlayer.paused) { 
-                playAudio(); 
-            } else { 
-                audioPlayer.pause(); 
-                playBtn.textContent = '▶'; 
-                statusEl.textContent = "Di-Jeda"; 
-                statusEl.style.background = "rgba(255,255,255,0.2)";
-            }
-        }
-
-        function updateActiveListItem() {
-            const items = listContainer.querySelectorAll('li');
-            items.forEach((el, i) => {
-                if (i === currentIndex) el.classList.add('active');
-                else el.classList.remove('active');
+            audio.play().then(() => {
+                setPlayState();
+                if (!bgVideo.classList.contains('hidden')) {
+                    bgVideo.play().catch(() => {});
+                }
+            }).catch(err => {
+                setStatus('Gagal Memuat Audio', 'red');
             });
         }
 
-        // Penanganan Otomatis jika koneksi ISP memblokir Catbox
-        audioPlayer.addEventListener('error', () => {
-            if (!isUsingProxy) {
-                isUsingProxy = true;
-                statusEl.textContent = "Mencoba Jalur Cadangan...";
-                statusEl.style.background = "rgba(255,150,0,0.4)";
-                // Menggunakan CORS Proxy agar terlepas dari blokir ISP/Browser
-                audioPlayer.src = "https://corsproxy.io/?" + encodeURIComponent(playlist[currentIndex].url);
-                audioPlayer.play();
+        function pauseAudio() {
+            audio.pause();
+            bgVideo.pause();
+            setPauseState();
+        }
+
+        function setPlayState() {
+            playIcon.className = "fa-solid fa-pause";
+            setStatus("Playing ♪", "emerald");
+        }
+
+        function setPauseState() {
+            playIcon.className = "fa-solid fa-play ml-0.5";
+            setStatus("Paused", "zinc");
+        }
+
+        function setStatus(text, color) {
+            statusBadge.textContent = text;
+            if (color === 'emerald') {
+                statusBadge.className = "px-3 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2";
+            } else if (color === 'red') {
+                statusBadge.className = "px-3 py-0.5 rounded-full text-[10px] font-semibold bg-red-500/20 text-red-400 border border-red-500/30 mb-2";
             } else {
-                statusEl.textContent = "Gagal Memuat Audio";
-                statusEl.style.background = "rgba(255,0,0,0.4)";
+                statusBadge.className = "px-3 py-0.5 rounded-full text-[10px] font-semibold bg-zinc-500/20 text-zinc-300 border border-zinc-500/30 mb-2";
             }
-        });
+        }
 
-        audioPlayer.addEventListener('waiting', () => {
-            statusEl.textContent = "Memuat Data...";
-            statusEl.style.background = "rgba(255,200,0,0.3)";
-        });
-
-        audioPlayer.addEventListener('playing', () => {
-            statusEl.textContent = "Memutar ♪";
-            statusEl.style.background = "rgba(0,255,100,0.3)";
-            playBtn.textContent = '❚❚';
-        });
-
-        audioPlayer.addEventListener('ended', () => { 
-            loadTrack((currentIndex + 1) % playlist.length, true); 
-        });
-
-        audioPlayer.addEventListener('timeupdate', () => {
-            if (audioPlayer.duration) {
-                progressEl.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
-                durationEl.textContent = formatTime(audioPlayer.duration);
-            }
-        });
-
-        document.getElementById('play-btn').onclick = togglePlay;
-        document.getElementById('prev-btn').onclick = () => loadTrack((currentIndex - 1 + playlist.length) % playlist.length, true);
-        document.getElementById('next-btn').onclick = () => loadTrack((currentIndex + 1) % playlist.length, true);
-        progressEl.oninput = () => { if (audioPlayer.duration) audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration; };
-
-        function renderList() {
-            listContainer.innerHTML = '';
-            playlist.forEach((track, index) => {
-                const item = document.createElement('li');
-                item.innerHTML = `<span class="song-name-item">${index + 1}. ${track.name}</span>`;
-                item.onclick = () => loadTrack(index, true);
-                listContainer.appendChild(item);
+        function updatePlaylistUI() {
+            const listItems = playlistContainer.querySelectorAll('li');
+            listItems.forEach((li, i) => {
+                if (i === currentIndex) {
+                    li.className = "active-song-row flex items-center justify-between p-2 rounded-lg cursor-pointer transition text-white font-bold";
+                } else {
+                    li.className = "flex items-center justify-between p-2 rounded-lg cursor-pointer transition text-gray-400 hover:text-white hover:bg-white/5";
+                }
             });
         }
 
-        renderList();
-        loadTrack(0, false);
-    </script>
-</body>
-</html>
+        function renderPlaylist() {
+            playlistContainer.innerHTML = '';
+            trackCount.textContent = playlist.length;
+
+            playlist.forEach((track, index) => {
+                const li = document.createElement('li');
+                li.onclick = () => loadTrack(index, true);
+
+                li.innerHTML = `
+                    <div class="flex items-center gap-3 truncate">
+                        <span class="text-xs font-mono w-5 text-gray-500">${index + 1}.</span>
+                        <span class="text-xs truncate">${track.name}</span>
+                    </div>
+                `;
+                playlistContainer.appendChild(li);
+            });
+        }
+
+        playBtn.onclick = () => {
+            if (audio.paused) playAudio();
+            else pauseAudio();
+        };
+
+        prevBtn.onclick = () => {
+            let nextIndex = currentIndex - 1;
+            if (nextIndex < 0) nextIndex = playlist.length - 1;
+            loadTrack(nextIndex, true);
+        };
+
+        nextBtn.onclick = () => {
+            let nextIndex = isShuffle 
+                ? Math.floor(Math.random() * playlist.length) 
+                : (currentIndex + 1) % playlist.length;
+            loadTrack(nextIndex, true);
+        };
+
+        audio.ontimeupdate = () => {
+            if (audio.duration) {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                progressBar.value = percentage;
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+                totalDurationEl.textContent = formatTime(audio.duration);
+            }
+        };
+
+        progressBar.oninput = () => {
+            if (audio.duration) {
+                audio.currentTime = (progressBar.value / 100) * audio.duration;
+            }
+        };
+
+        audio.onwaiting = () => setStatus("Buffering...", "zinc");
+        audio.onplaying = () => setPlayState();
+        audio.onended = () => {
+            let nextIndex = isShuffle 
+                ? Math.floor(Math.random() * playlist.length) 
+                : (currentIndex + 1) % playlist.length;
+            loadTrack(nextIndex, true);
+        };
+
+        audio.onerror = () => setStatus("Gagal Memuat Audio", "red");
+
+        shuffleBtn.onclick = () => {
+            isShuffle = !isShuffle;
+            shuffleBtn.classList.toggle('text-blue-400', isShuffle);
+            shuffleBtn.classList.toggle('text-gray-400', !isShuffle);
+        };
+
+        likeBtn.onclick = () => {
+            isLiked = !isLiked;
+            const heartIcon = likeBtn.querySelector('i');
+            if (isLiked) {
+                heartIcon.cla
