@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playlist - Now Playing</title>
+    <title>Music Player</title>
     <style>
         * {
             box-sizing: border-box;
@@ -47,18 +48,18 @@
             z-index: 10;
         }
 
-        /* Header "Now Playing" */
+        /* Header "NOW PLAYING" */
         .header-title {
             font-size: 13px;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 20px;
             text-transform: uppercase;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* Cover Art / Poster Image */
+        /* Poster Image Container */
         .poster-container {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -106,7 +107,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Wadah Teks Berjalan (Marquee) */
+        /* Marquee Teks Artis */
         .marquee-container {
             width: 100%;
             overflow: hidden;
@@ -207,7 +208,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        /* Glassmorphism Playlist Section */
+        /* Glassmorphism Playlist Card */
         .playlist-card {
             width: 100%;
             background: rgba(0, 0, 0, 0.45);
@@ -232,7 +233,7 @@
             padding: 0; 
             list-style: none; 
             margin: 0;
-            max-height: 220px;
+            max-height: 240px;
             overflow-y: auto;
         }
 
@@ -269,12 +270,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 240px;
-        }
-
-        .song-duration-item {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
+            max-width: 280px;
         }
 
         /* Bottom Navigation Bar */
@@ -305,21 +301,21 @@
 </head>
 <body>
 
-    <!-- Video Background Animasi -->
+    <!-- Video Background Animasi (Muted / Tanpa Suara) -->
     <video autoplay muted loop playsinline id="bg-video">
         <source src="https://files.catbox.moe/ypad4h.mp4" type="video/mp4">
     </video>
 
     <div class="container">
-        <!-- Header -->
-        <div class="header-title">Now Playing</div>
+        <!-- Header Title -->
+        <div class="header-title">NOW PLAYING</div>
 
-        <!-- Poster Image -->
+        <!-- Poster Gambar -->
         <div class="poster-container">
             <img src="sampul.jpg" alt="Poster" class="poster">
         </div>
 
-        <!-- Player Card -->
+        <!-- Pemutar Musik -->
         <div class="player-card">
             <div class="song-info">
                 <div class="song-title" id="title">Memuat...</div>
@@ -345,24 +341,24 @@
             </div>
         </div>
 
-        <!-- Playlist Card -->
+        <!-- Kartu Playlist (Semua 41 Lagu Bisa Di-scroll) -->
         <div class="playlist-card">
-            <div class="playlist-header" id="playlist-count">Playlist • 41 lagu</div>
+            <div class="playlist-header" id="playlist-count">PLAYLIST • 41 LAGU</div>
             <ul id="list"></ul>
         </div>
 
-        <!-- Bottom Navigation Bar -->
+        <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <span class="nav-item active">🏠</span>
             <span class="nav-item">🔍</span>
             <span class="nav-item">📚</span>
         </div>
 
-        <audio id="audio-player" preload="auto" crossorigin="anonymous"></audio>
+        <audio id="audio-player" preload="metadata"></audio>
     </div>
 
     <script>
-        // Memastikan suara video background mati
+        // Memastikan suara video latar belakang mati
         const bgVideo = document.getElementById('bg-video');
         if (bgVideo) {
             bgVideo.muted = true;
@@ -428,7 +424,7 @@
         const playlistCountEl = document.getElementById('playlist-count');
         const likeBtn = document.getElementById('like-btn');
 
-        playlistCountEl.textContent = `Playlist • ${playlist.length} lagu`;
+        playlistCountEl.textContent = `PLAYLIST • ${playlist.length} LAGU`;
 
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds === 0) return "0:00";
@@ -449,20 +445,6 @@
             updateActiveListItem();
 
             audioPlayer.src = track.url;
-            audioPlayer.load();
-
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: track.name,
-                    artist: track.artist,
-                    artwork: [{ src: 'sampul.jpg', sizes: '512x512', type: 'image/jpeg' }]
-                });
-
-                navigator.mediaSession.setActionHandler('play', () => togglePlay());
-                navigator.mediaSession.setActionHandler('pause', () => togglePlay());
-                navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
-                navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
-            }
 
             if (shouldPlay) {
                 playAudio();
@@ -475,7 +457,7 @@
                 playPromise.then(() => {
                     playBtn.textContent = '❚❚';
                 }).catch(error => {
-                    console.log("Autoplay dicegah oleh browser:", error);
+                    console.log("Autoplay dihambat oleh kebijakan browser:", error);
                     playBtn.textContent = '▶';
                 });
             }
@@ -544,4 +526,28 @@
         prevBtn.addEventListener('click', prevTrack);
         nextBtn.addEventListener('click', nextTrack);
 
-        progressEl.addE
+        progressEl.addEventListener('input', () => {
+            if (audioPlayer.duration) {
+                audioPlayer.currentTime = (progressEl.value / 100) * audioPlayer.duration;
+            }
+        });
+
+        function renderList() {
+            listContainer.innerHTML = '';
+            playlist.forEach((track, index) => {
+                const item = document.createElement('li');
+                item.innerHTML = `
+                    <span class="song-name-item">${index + 1}. ${track.name}</span>
+                `;
+                item.onclick = function() {
+                    loadTrack(index, true);
+                };
+                listContainer.appendChild(item);
+            });
+        }
+
+        renderList();
+        loadTrack(0, false);
+    </script>
+</body>
+</html>
