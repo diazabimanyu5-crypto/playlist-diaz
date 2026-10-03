@@ -1,304 +1,430 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hahahaha, You Idiot!</title>
+    <title>NOW PLAYING</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #0b0c10;
-            background-image: 
-                radial-gradient(circle at 50% 30%, #1f1235 0%, #0b0c10 70%),
-                radial-gradient(circle at 20% 80%, #2a085c 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, #033f63 0%, transparent 50%);
-            min-height: 100vh;
+            background-color: #0d0d0d;
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.98)), url('https://picsum.photos/800/1200?blur=5');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            padding: 20px 15px 40px 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            position: relative;
+            gap: 15px;
         }
 
-        /* --- BACKGROUND PARTICLES / GLOW EFFECTS --- */
-        .glow-bg {
-            position: absolute;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(255,0,128,0.15) 0%, rgba(0,255,255,0.05) 50%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            filter: blur(40px);
-            z-index: 0;
-            animation: pulseGlow 4s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: scale(0.9); opacity: 0.6; }
-            100% { transform: scale(1.15); opacity: 1; }
-        }
-
-        /* --- MARQUEE NEON RUNNING TEXT --- */
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            position: absolute;
-            top: 6%;
-            padding: 15px 0;
-            z-index: 10;
-            background: rgba(12, 13, 16, 0.4);
-            border-top: 2px solid rgba(255, 0, 128, 0.3);
-            border-bottom: 2px solid rgba(0, 255, 255, 0.3);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        .marquee-text {
-            display: inline-block;
-            font-size: 38px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            animation: marquee 7s linear infinite, blinkRainbow 0.4s infinite alternate;
-            padding-left: 100%;
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-
-        @keyframes blinkRainbow {
-            0% {
-                color: #ff0055;
-                text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 40px #ff0055;
-                opacity: 1;
-            }
-            25% {
-                color: #00ffff;
-                text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
-                opacity: 0.5;
-            }
-            50% {
-                color: #00ff66;
-                text-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66, 0 0 40px #00ff66;
-                opacity: 1;
-            }
-            75% {
-                color: #ff00ff;
-                text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff;
-                opacity: 0.6;
-            }
-            100% {
-                color: #ffff00;
-                text-shadow: 0 0 10px #ffff00, 0 0 20px #ffff00, 0 0 40px #ffff00;
-                opacity: 1;
-            }
-        }
-
-        /* --- MAIN ANIMATION SCENE CONTAINER --- */
-        .scene {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            height: 450px;
+        /* Top Bar */
+        .top-bar {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            z-index: 2;
-            margin-top: 40px;
+            padding: 5px;
         }
 
-        svg {
+        .top-bar .title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #b3b3b3;
+        }
+
+        .top-bar .badge {
+            background-color: #26262a;
+            color: #b3b3b3;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Cover Image */
+        .cover-box {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .cover-box img {
             width: 100%;
             height: 100%;
-            overflow: visible;
+            object-fit: cover;
         }
 
-        /* --- STREAMING_CHUNK:Defining SVG Anime Hand Animations... --- */
-
-        /* SPINNING LEFT ANIME HAND */
-        .rotating-hand-group {
-            transform-origin: 150px 250px;
-            animation: spinLeftHand 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+        /* Player Card */
+        .player-card {
+            background-color: #16161a;
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid #232328;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
 
-        @keyframes spinLeftHand {
-            0% {
-                transform: rotate(0deg) scale(0.85);
-            }
-            100% {
-                transform: rotate(360deg) scale(0.85);
-            }
+        .song-title {
+            text-align: center;
+            font-size: 17px;
+            font-weight: 700;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* MAIN ANIME HAND & MIDDLE FINGER ANIMATION */
-        .middle-finger-group {
-            transform-origin: 350px 225px;
-            animation: raiseMiddleFinger 2.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite alternate;
+        .inst-credit {
+            text-align: right;
+            font-size: 11px;
+            color: #a0a0a5;
+            margin-top: -5px;
         }
 
-        @keyframes raiseMiddleFinger {
-            0% {
-                /* Hand fully clenched in a fist */
-                transform: translateY(75px) scaleY(0.08);
-            }
-            35% {
-                /* Pauses briefly in full fist */
-                transform: translateY(75px) scaleY(0.08);
-            }
-            100% {
-                /* Smoothly extends full anime middle finger up */
-                transform: translateY(0px) scaleY(1);
-            }
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        /* Slight bounce on main hand for fluid life-like motion */
-        .main-hand-body {
-            transform-origin: 350px 300px;
-            animation: handPulse 2.8s ease-in-out infinite alternate;
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background-color: #333338;
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
         }
 
-        @keyframes handPulse {
-            0% { transform: translateY(5px); }
-            100% { transform: translateY(-5px); }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #ffffff;
+            border-radius: 3px;
+            position: relative;
         }
 
-        /* Responsive scaling */
-        @media (max-width: 480px) {
-            .marquee-text {
-                font-size: 26px;
-            }
-            .scene {
-                height: 350px;
-            }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: -3.5px;
+            width: 12px;
+            height: 12px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #8e8e93;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 10px 5px 10px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-icon:active {
+            transform: scale(0.9);
+        }
+
+        .btn-icon:hover {
+            opacity: 1;
+        }
+
+        .btn-shuffle {
+            background-color: #d97706;
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 1;
+        }
+
+        .btn-play {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 20px;
+            opacity: 1;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
+
+        /* Playlist Card */
+        .playlist-card {
+            background-color: #16161a;
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border: 1px solid #232328;
+        }
+
+        .playlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .playlist-header h3 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .playlist-header .count {
+            font-size: 12px;
+            color: #8e8e93;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1f1f24;
+            padding: 8px;
+            border-radius: 16px;
+        }
+
+        .btn-page {
+            background-color: #2c2c32;
+            border: none;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        audio {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- Background Glow Effect -->
-    <div class="glow-bg"></div>
+    <div class="container">
 
-    <div class="marquee-container">
-        <div class="marquee-text">Hahahaha, you idiot &nbsp;&nbsp;•&nbsp;&nbsp; Hahahaha, you idiot &nbsp;&nbsp;•&nbsp;&nbsp; Hahahaha, you idiot</div>
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <span class="title">NOW PLAYING</span>
+            <span class="badge" id="pageBadge">Page 1 / 5</span>
+        </div>
+
+        <!-- Cover Image -->
+        <div class="cover-box">
+            <img id="albumCover" src="https://picsum.photos/600/600?random=1" alt="Cover">
+        </div>
+
+        <!-- Music Player Card -->
+        <div class="player-card">
+            <div class="song-title" id="songTitle">Sambutlah - The Jeblogs</div>
+            <div class="inst-credit">Inst:diazabimanyuu_</div>
+
+            <!-- Progress -->
+            <div class="progress-container">
+                <div class="progress-bar" onclick="seekAudio(event)">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="time-info">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="btn-icon btn-shuffle" title="Shuffle">🔀</button>
+                <button class="btn-icon" onclick="prevSong()" title="Previous">⏮</button>
+                <button class="btn-icon btn-play" id="playBtn" onclick="togglePlay()" title="Play/Pause">▶</button>
+                <button class="btn-icon" onclick="nextSong()" title="Next">⏭</button>
+                <button class="btn-icon" title="Favorite">♡</button>
+            </div>
+        </div>
+
+        <!-- Playlist Card -->
+        <div class="playlist-card">
+            <div class="playlist-header">
+                <h3>PLAYLIST</h3>
+                <span class="count">41 Lagu</span>
+            </div>
+
+            <div class="pagination">
+                <button class="btn-page" onclick="prevPage()">❮ Prev Page</button>
+                <span class="page-num" id="pageText" style="font-size: 12px; color: #b3b3b3;">1 / 5</span>
+                <button class="btn-page" onclick="nextPage()">Next Page ❯</button>
+            </div>
+        </div>
+
     </div>
 
-    <div class="scene">
-        <svg viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-            
-            <defs>
-                <!-- Anime Skin Colors & Gradients -->
-                <linearGradient id="skinBase" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffdfcb" />
-                    <stop offset="100%" stop-color="#f2be9b" />
-                </linearGradient>
+    <audio id="audioElement" crossorigin="anonymous"></audio>
 
-                <linearGradient id="skinShadow" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#e09b7d" />
-                    <stop offset="100%" stop-color="#c4785a" />
-                </linearGradient>
+    <script>
+        // Daftar Tautan MP3 yang Stabil dan Bebas Blokir
+        const songs = [
+            { 
+                title: "Sambutlah - The Jeblogs", 
+                src: "https://actions.google.com/sounds/v1/ambiences/rain_heavy.ogg", 
+                cover: "https://picsum.photos/600/600?random=11" 
+            },
+            { 
+                title: "Tanah Indah - FSTVLST", 
+                src: "https://actions.google.com/sounds/v1/transportation/car_horn.ogg", 
+                cover: "https://picsum.photos/600/600?random=12" 
+            },
+            { 
+                title: "Acoustic Chill Beats", 
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", 
+                cover: "https://picsum.photos/600/600?random=13" 
+            }
+        ];
 
-                <!-- Soft Glow Filter for Anime Lines -->
-                <filter id="animeGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#ff0055" flood-opacity="0.25"/>
-                </filter>
-            </defs>
+        let currentIndex = 0;
+        let currentPage = 1;
+        const totalPages = 5;
 
-            <!-- ================= LEFT ANIME HAND (SPINNING / ROTATING FIST) ================= -->
-            <g class="rotating-hand-group" filter="url(#animeGlow)">
-                <!-- Sleeve / Wrist -->
-                <path d="M 110 320 L 175 320 L 165 240 L 115 240 Z" fill="#1e1b2e" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
-                
-                <!-- Wrist Cuff Line -->
-                <path d="M 115 245 C 130 250, 150 250, 165 245" stroke="#ff0055" stroke-width="3"/>
+        const audio = document.getElementById('audioElement');
+        const playBtn = document.getElementById('playBtn');
+        const songTitle = document.getElementById('songTitle');
+        const albumCover = document.getElementById('albumCover');
+        const progressFill = document.getElementById('progressFill');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
 
-                <!-- Clenched Fist Base -->
-                <path d="M 110 240 Q 90 200 115 170 Q 155 150 180 180 Q 190 220 165 240 Z" fill="url(#skinBase)" stroke="#2b1105" stroke-width="4.5" stroke-linejoin="round"/>
-                
-                <!-- Anime Finger Contours (Fist Folding) -->
-                <!-- Index folded -->
-                <path d="M 115 170 Q 130 180 145 175" fill="url(#skinShadow)" stroke="#2b1105" stroke-width="3.5" stroke-linecap="round"/>
-                <path d="M 115 175 C 120 195, 140 195, 148 180" fill="url(#skinBase)" stroke="#2b1105" stroke-width="3.5"/>
+        function loadSong(index) {
+            const song = songs[index];
+            songTitle.innerText = song.title;
+            albumCover.src = song.cover;
+            audio.src = song.src;
+        }
 
-                <!-- Middle folded -->
-                <path d="M 145 175 C 152 198, 165 195, 168 182" fill="url(#skinBase)" stroke="#2b1105" stroke-width="3.5"/>
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playBtn.innerText = '⏸';
+                }).catch(err => {
+                    alert("Klik sekali lagi untuk memutar audio.");
+                });
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶';
+            }
+        }
 
-                <!-- Ring folded -->
-                <path d="M 168 182 C 175 202, 185 198, 184 190" fill="url(#skinBase)" stroke="#2b1105" stroke-width="3.5"/>
+        function nextSong() {
+            currentIndex = (currentIndex + 1) % songs.length;
+            loadSong(currentIndex);
+            audio.play().then(() => {
+                playBtn.innerText = '⏸';
+            });
+        }
 
-                <!-- Anime Thumb Wrapping Over Fist -->
-                <path d="M 105 210 Q 120 220 145 200 Q 155 190 140 180 Q 120 190 105 210 Z" fill="url(#skinBase)" stroke="#2b1105" stroke-width="4" stroke-linejoin="round"/>
-                <path d="M 122 205 Q 135 208 142 198" stroke="#c4785a" stroke-width="3" stroke-linecap="round"/>
-            </g>
+        function prevSong() {
+            currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+            loadSong(currentIndex);
+            audio.play().then(() => {
+                playBtn.innerText = '⏸';
+            });
+        }
 
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = percent + '%';
+                currentTimeEl.innerText = formatTime(audio.currentTime);
+                durationEl.innerText = formatTime(audio.duration);
+            }
+        });
 
-            <!-- ================= MAIN RIGHT ANIME HAND (MIDDLE FINGER RAISING) ================= -->
-            <g class="main-hand-body" filter="url(#animeGlow)">
+        audio.addEventListener('ended', () => {
+            nextSong();
+        });
 
-                <!-- 1. MIDDLE FINGER (ANIMATED UP / DOWN) -->
-                <g class="middle-finger-group">
-                    <!-- Finger Shadow / Backing -->
-                    <path d="M 333 80 L 367 80 L 370 230 L 330 230 Z" fill="url(#skinShadow)"/>
-                    
-                    <!-- Middle Finger Main Shaft -->
-                    <rect x="334" y="70" width="32" height="155" rx="16" fill="url(#skinBase)" stroke="#2b1105" stroke-width="4.5"/>
-                    
-                    <!-- Anime Knuckle Lines & Cel-shading -->
-                    <!-- Top Knuckle -->
-                    <path d="M 340 105 C 348 100, 354 100, 360 105" stroke="#c4785a" stroke-width="3" stroke-linecap="round"/>
-                    <path d="M 342 112 C 348 108, 352 108, 358 112" stroke="#2b1105" stroke-width="2" stroke-linecap="round"/>
+        function formatTime(time) {
+            const mins = Math.floor(time / 60);
+            const secs = Math.floor(time % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
-                    <!-- Middle Knuckle -->
-                    <path d="M 339 145 C 348 138, 354 138, 361 145" stroke="#c4785a" stroke-width="3" stroke-linecap="round"/>
-                    <path d="M 341 152 C 348 146, 352 146, 359 152" stroke="#2b1105" stroke-width="2.5" stroke-linecap="round"/>
+        function seekAudio(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            if (audio.duration) {
+                audio.currentTime = (clickX / width) * audio.duration;
+            }
+        }
 
-                    <!-- Anime Nail Contour -->
-                    <path d="M 342 82 C 342 75, 358 75, 358 82 L 358 88 C 358 92, 342 92, 342 88 Z" fill="#fff5ee" stroke="#2b1105" stroke-width="2"/>
-                </g>
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePageUI();
+            }
+        }
 
-                <!-- 2. WRIST & SLEEVE (MAIN HAND) -->
-                <path d="M 305 370 L 395 370 L 385 270 L 315 270 Z" fill="#1b263b" stroke="#2b1105" stroke-width="4.5" stroke-linejoin="round"/>
-                <path d="M 315 275 Q 350 285 385 275" stroke="#00ffff" stroke-width="3.5"/>
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePageUI();
+            }
+        }
 
-                <!-- 3. PALM BASE & FOLDED FINGERS (FOREGROUND CLENCHED FIST) -->
-                
-                <!-- Palm Mass / Base Shadow -->
-                <path d="M 295 270 Q 280 210 305 185 Q 350 170 395 190 Q 415 230 385 270 Z" fill="url(#skinBase)" stroke="#2b1105" stroke-width="4.5" stroke-linejoin="round"/>
-                
-                <!-- Inner Palm Cel-Shading -->
-                <path d="M 310 265 Q 295 215 315 195 C 330 210, 360 210, 380 230 Q 388 255 375 265 Z" fill="url(#skinShadow)" opacity="0.65"/>
+        function updatePageUI() {
+            document.getElementById('pageText').innerText = `${currentPage} / ${totalPages}`;
+            document.getElementById('pageBadge').innerText = `Page ${currentPage} / ${totalPages}`;
+        }
 
-                <!-- INDEX FINGER (FOLDED) -->
-                <path d="M 300 188 C 295 170, 325 160, 336 182 C 338 198, 310 205, 300 188 Z" fill="url(#skinBase)" stroke="#2b1105" stroke-width="4" stroke-linejoin="round"/>
-                <path d="M 308 175 Q 320 180 328 172" stroke="#2b1105" stroke-width="2.5" stroke-linecap="round"/>
-
-                <!-- RING FINGER (FOLDED) -->
-                <path d="M 364 182 C 372 165, 400 175, 396 192 C 390 208, 365 200, 364 182 Z" fill="url(#skinBase)" stroke="#2b1105" stroke-width="4" stroke-linejoin="round"/>
-                <path d="M 372 176 Q 384 182 390 176" stroke="#2b1105" stroke-width="2.5" stroke-linecap="round"/>
-
-                <!-- PINKY FINGER (FOLDED) -->
-                <path d="M 394 194 C 402 182, 422 192, 418 208 C 412 222, 392 215, 394 194 Z" fill="url(#skinBase)" stroke="#2b1105" stroke-width="3.5" stroke-linejoin="round"/>
-
-                <!-- ANIME THUMB (FOLDED OVER FIST FRONT) -->
-                <path d="M 285 225 Q 300 200 338 215 Q 355 225 345 242 Q 320 255 292 245 Z" fill="url(#skinBase)" stroke="#2b1105" stroke-width="4.5" stroke-linejoin="round"/>
-                
-                <!-- Thumb Crease & Detail -->
-                <path d="M 310 218 Q 328 222 338 230" stroke="#c4785a" stroke-width="3" stroke-linecap="round"/>
-                <path d="M 292 245 C 310 240, 330 242, 345 242" stroke="#2b1105" stroke-width="3" stroke-linecap="round"/>
-            </g>
-
-        </svg>
-    </div>
-
+        // Muat lagu awal
+        loadSong(currentIndex);
+    </script>
 </body>
 </html>
-```
